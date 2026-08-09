@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://caa1j61sy232w"]
+
+[ext_resource type="FontFile" uid="uid://co01nrvoew3fp" path="res://Assets/Kenney Pixel.ttf" id="1_37p78"]
+[ext_resource type="Script" uid="uid://br856wrx5aoo3" path="res://Elements/HUD/hud.gd" id="1_64ctp"]
+
+[sub_resource type="Theme" id="Theme_qvrfq"]
+HBoxContainer/constants/separation = 43
+Label/font_sizes/font_size = 16
+Label/fonts/font = ExtResource("1_37p78")
+
+[node name="HUD" type="CanvasLayer" unique_id=1505405376]
+follow_viewport_enabled = true
+script = ExtResource("1_64ctp")
+
+[node name="Control" type="Control" parent="." unique_id=141338380]
+texture_filter = 1
+layout_mode = 3
+anchors_preset = 0
+offset_left = 204.0
+offset_top = -185.0
+offset_right = 244.0
+offset_bottom = -145.0
+
+[node name="Labels" type="HBoxContainer" parent="Control" unique_id=1492082469]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -93.0
+offset_right = 93.0
+offset_bottom = 40.0
+grow_horizontal = 2
+theme = SubResource("Theme_qvrfq")
+alignment = 1
+
+[node name="Score" type="Label" parent="Control/Labels" unique_id=1194632168]
+layout_mode = 2
+text = "SCORE: 0"
+
+[node name="Lives" type="Label" parent="Control/Labels" unique_id=1244636387]
+layout_mode = 2
+text = "LIVES: 3"
+
+[node name="Level" type="Label" parent="Control/Labels" unique_id=1326186463]
+layout_mode = 2
+text = "LEVEL: 1"

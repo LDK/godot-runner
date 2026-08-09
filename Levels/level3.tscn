@@ -1,0 +1,117 @@
+[gd_scene format=4 uid="uid://bpxtkcjxbmgnc"]
+
+[ext_resource type="Texture2D" uid="uid://dg3mnm3ieg82l" path="res://Assets/NES - Lode Runner - Miscellaneous - Tileset.png" id="1_31k36"]
+[ext_resource type="PackedScene" uid="uid://cdosdwkeoory" path="res://Elements/Brick/brick.tscn" id="2_qqkb1"]
+[ext_resource type="PackedScene" uid="uid://c1xq0mu7tjoja" path="res://Elements/Block/block.tscn" id="3_6xp1k"]
+[ext_resource type="PackedScene" uid="uid://dqlribbnm08oy" path="res://Elements/Ladder/ladder.tscn" id="4_6ki5y"]
+[ext_resource type="PackedScene" uid="uid://pqw42tlynrdq" path="res://Elements/Bar/bar.tscn" id="5_1ms4j"]
+[ext_resource type="Script" uid="uid://davi5rtkmi7pl" path="res://Elements/Map/map.gd" id="6_qcn6d"]
+[ext_resource type="PackedScene" uid="uid://cgavv5lbnc0ai" path="res://Characters/Hero/hero.tscn" id="7_gtjp5"]
+[ext_resource type="PackedScene" uid="uid://q87xtt5lvavt" path="res://Elements/Level Constants/level_constants.tscn" id="8_v20bq"]
+[ext_resource type="PackedScene" uid="uid://dqhvwr4vyeil1" path="res://Characters/Enemy/enemy.tscn" id="13_i5kxt"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i2041"]
+texture = ExtResource("1_31k36")
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+1:0/0 = 0
+1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+0:1/0 = 0
+0:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+6:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+6:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+5:3/0 = 0
+0:4/0 = 0
+1:4/0 = 0
+3:4/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+0:5/0 = 0
+1:5/0 = 0
+3:5/0 = 0
+4:5/0 = 0
+5:5/0 = 0
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_xy4tn"]
+scenes/1/scene = ExtResource("2_qqkb1")
+scenes/2/scene = ExtResource("3_6xp1k")
+scenes/3/scene = ExtResource("4_6ki5y")
+scenes/4/scene = ExtResource("5_1ms4j")
+
+[sub_resource type="TileSet" id="TileSet_qvrfq"]
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_i2041")
+sources/1 = SubResource("TileSetScenesCollectionSource_xy4tn")
+
+[node name="Level 3" type="Node2D" unique_id=1580821969]
+texture_filter = 1
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1229703736]
+physics_interpolation_mode = 1
+tile_map_data = PackedByteArray("AAAdAAIAAQAAAAAAAQD+/wgAAQAAAAAAAQD//wgAAQAAAAAAAQAAAAgAAQAAAAAAAQABAAgAAQAAAAAAAQACAAgAAQAAAAAAAQADAAgAAQAAAAAAAQAEAAgAAQAAAAAAAQAFAAgAAQAAAAAAAQAGAAgAAQAAAAAAAQAHAAgAAQAAAAAAAQAIAAgAAQAAAAAAAQAJAAgAAQAAAAAAAQAKAAgAAQAAAAAAAQALAAgAAQAAAAAAAQAMAAgAAQAAAAAAAQANAAgAAQAAAAAAAQAOAAgAAQAAAAAAAQAPAAgAAQAAAAAAAQAQAAgAAQAAAAAAAQARAAgAAQAAAAAAAQASAAgAAQAAAAAAAQATAAgAAQAAAAAAAQAUAAgAAQAAAAAAAQAVAAgAAQAAAAAAAQAWAAgAAQAAAAAAAQAXAAgAAQAAAAAAAQAYAAgAAQAAAAAAAQAZAAgAAQAAAAAAAQAaAAgAAQAAAAAAAQAbAAgAAQAAAAAAAQAcAAgAAQAAAAAAAQAdAAgAAQAAAAAAAQAdAAcAAQAAAAAAAwAdAAYAAQAAAAAAAwABAAcAAQAAAAAAAwABAAYAAQAAAAAAAwAcAAYAAQAAAAAAAQAaAAYAAQAAAAAAAQAbAAYAAQAAAAAAAQAYAAYAAQAAAAAAAQAZAAYAAQAAAAAAAQAXAAYAAQAAAAAAAQACAAYAAQAAAAAAAQADAAYAAQAAAAAAAQAEAAYAAQAAAAAAAQAFAAYAAQAAAAAAAQAGAAYAAQAAAAAAAQAFAAUAAQAAAAAAAwAFAAQAAQAAAAAAAwAFAAMAAQAAAAAAAwAXAAUAAQAAAAAAAwAXAAQAAQAAAAAAAwAXAAMAAQAAAAAAAwAXAAIAAQAAAAAAAwAXAAEAAQAAAAAAAwAXAAAAAQAAAAAAAwAGAAMAAQAAAAAAAQAHAAMAAQAAAAAAAQAIAAMAAQAAAAAAAQAJAAMAAQAAAAAAAQAKAAMAAQAAAAAAAQAOAAMAAQAAAAAAAQANAAMAAQAAAAAAAQAMAAMAAQAAAAAAAQALAAMAAQAAAAAAAQAPAAMAAQAAAAAAAQAQAAMAAQAAAAAAAQARAAMAAQAAAAAAAQASAAMAAQAAAAAAAQATAAMAAQAAAAAAAQAUAAMAAQAAAAAAAQAVAAMAAQAAAAAAAQAWAAMAAQAAAAAAAQAEAAMAAQAAAAAAAQADAAMAAQAAAAAAAQACAAMAAQAAAAAAAQABAAMAAQAAAAAAAQAAAAMAAQAAAAAAAQD//wMAAQAAAAAAAQD+/wMAAQAAAAAAAQAAAAIAAQAAAAAAAwAAAAEAAQAAAAAAAwAAAAAAAQAAAAAAAwD//wAAAQAAAAAAAQD+/wAAAQAAAAAAAQAEAAAAAQAAAAAAAQADAAAAAQAAAAAAAQACAAAAAQAAAAAAAQABAAAAAQAAAAAAAQAEAP//AQAAAAAAAwAEAP7/AQAAAAAAAwAEAP3/AQAAAAAAAwAEAPz/AQAAAAAAAwAEAPr/AQAAAAAAAwAEAPv/AQAAAAAAAwAJAPz/AQAAAAAAAQAIAPz/AQAAAAAAAQAIAP3/AQAAAAAAAQAJAP3/AQAAAAAAAQAJAP7/AQAAAAAAAQAIAP7/AQAAAAAAAQAJAP//AQAAAAAAAQAIAP//AQAAAAAAAQAIAAAAAQAAAAAAAQAJAAAAAQAAAAAAAQAKAAAAAQAAAAAAAQALAAAAAQAAAAAAAQAMAAAAAQAAAAAAAQANAAAAAQAAAAAAAQAOAAAAAQAAAAAAAQAPAAAAAQAAAAAAAQAQAAAAAQAAAAAAAQARAAAAAQAAAAAAAQASAAAAAQAAAAAAAQATAAAAAQAAAAAAAQAUAAAAAQAAAAAAAQAVAAAAAQAAAAAAAQAWAAAAAQAAAAAAAQAYAAAAAQAAAAAAAQAZAAAAAQAAAAAAAQAaAAAAAQAAAAAAAQAbAAAAAQAAAAAAAQAJAPr/AQAAAAAAAQAIAPr/AQAAAAAAAQAHAPr/AQAAAAAAAQAGAPr/AQAAAAAAAQAFAPr/AQAAAAAAAQADAPr/AQAAAAAAAQACAPr/AQAAAAAAAQABAPr/AQAAAAAAAQAAAPr/AQAAAAAAAQD///r/AQAAAAAAAQD+//r/AQAAAAAAAQAFAPv/AQAAAAAABAAGAPv/AQAAAAAABAAHAPv/AQAAAAAABAAIAPv/AQAAAAAABAAJAPv/AQAAAAAABAAKAPv/AQAAAAAABAALAPv/AQAAAAAABAAMAPv/AQAAAAAABAAaAPz/AQAAAAAAAwAaAP3/AQAAAAAAAwAaAP7/AQAAAAAAAwAbAPz/AQAAAAAAAQAcAPz/AQAAAAAAAQAdAPz/AQAAAAAAAQAVAPz/AQAAAAAAAQAWAPz/AQAAAAAAAQAXAPz/AQAAAAAAAQAYAPz/AQAAAAAAAQAZAPz/AQAAAAAAAQAaAP//AQAAAAAAAwAKAPz/AQAAAAAAAQALAPz/AQAAAAAAAQALAP3/AQAAAAAAAQALAP7/AQAAAAAAAQALAP//AQAAAAAAAQAKAP//AQAAAAAAAQAKAP7/AQAAAAAAAQAKAP3/AQAAAAAAAQAKAPr/AQAAAAAAAQALAPr/AQAAAAAAAQANAPv/AQAAAAAABAAOAPv/AQAAAAAABAAPAPv/AQAAAAAABAAQAPv/AQAAAAAABAAMAPr/AQAAAAAAAQANAPr/AQAAAAAAAQAMAPz/AQAAAAAAAQANAPz/AQAAAAAAAQANAP3/AQAAAAAAAQANAP7/AQAAAAAAAQAMAP7/AQAAAAAAAQAMAP//AQAAAAAAAQAMAP3/AQAAAAAAAQANAP//AQAAAAAAAQARAPz/AQAAAAAAAQASAPz/AQAAAAAAAQATAPz/AQAAAAAAAQAUAPz/AQAAAAAAAQA=")
+tile_set = SubResource("TileSet_qvrfq")
+script = ExtResource("6_qcn6d")
+
+[node name="Hero" parent="." unique_id=702208146 instance=ExtResource("7_gtjp5")]
+position = Vector2(10, 120)
+
+[node name="Level Constants" parent="." unique_id=937608272 node_paths=PackedStringArray("hero", "map") instance=ExtResource("8_v20bq")]
+hero = NodePath("../Hero")
+level_number = 2
+map = NodePath("../TileMapLayer")
+
+[node name="Golds" type="Node2D" parent="." unique_id=147532174]
+
+[node name="Enemies" type="Node2D" parent="." unique_id=1588275578]
+
+[node name="Enemy" parent="Enemies" unique_id=773071020 instance=ExtResource("13_i5kxt")]
+position = Vector2(392, -72)
+
+[connection signal="area_entered" from="TileMapLayer/Bar" to="TileMapLayer/Bar" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/Bar" to="TileMapLayer/Bar" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@110758" to="TileMapLayer/@Area2D@110758" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@110758" to="TileMapLayer/@Area2D@110758" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@110759" to="TileMapLayer/@Area2D@110759" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@110759" to="TileMapLayer/@Area2D@110759" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@110760" to="TileMapLayer/@Area2D@110760" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@110760" to="TileMapLayer/@Area2D@110760" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@110761" to="TileMapLayer/@Area2D@110761" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@110761" to="TileMapLayer/@Area2D@110761" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@110762" to="TileMapLayer/@Area2D@110762" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@110762" to="TileMapLayer/@Area2D@110762" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@110763" to="TileMapLayer/@Area2D@110763" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@110763" to="TileMapLayer/@Area2D@110763" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@110764" to="TileMapLayer/@Area2D@110764" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@110764" to="TileMapLayer/@Area2D@110764" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@110787" to="TileMapLayer/@Area2D@110787" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@110787" to="TileMapLayer/@Area2D@110787" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@110788" to="TileMapLayer/@Area2D@110788" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@110788" to="TileMapLayer/@Area2D@110788" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@110789" to="TileMapLayer/@Area2D@110789" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@110789" to="TileMapLayer/@Area2D@110789" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@110790" to="TileMapLayer/@Area2D@110790" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@110790" to="TileMapLayer/@Area2D@110790" method="_on_area_exited"]

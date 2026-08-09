@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://dyfh4wvggaglw"]
+
+[ext_resource type="Script" uid="uid://3udallnglv2r" path="res://Elements/Ladder/ladder_top.gd" id="1_gaulj"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qvrfq"]
+size = Vector2(16, 16)
+
+[node name="LadderTop" type="Area2D" unique_id=228704383]
+texture_filter = 1
+script = ExtResource("1_gaulj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1604493289]
+shape = SubResource("RectangleShape2D_qvrfq")
+debug_color = Color(0.88566846, 0.0003047639, 0.8086112, 0.41960785)
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="area_exited" from="." to="." method="_on_area_exited"]

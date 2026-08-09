@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://c1xq0mu7tjoja"]
+
+[ext_resource type="Script" uid="uid://1gd1m2h4utvc" path="res://Elements/Block/block.gd" id="1_xfwl5"]
+[ext_resource type="Texture2D" uid="uid://dg3mnm3ieg82l" path="res://Assets/NES - Lode Runner - Miscellaneous - Tileset.png" id="2_5d32t"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5d32t"]
+atlas = ExtResource("2_5d32t")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qvrfq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5d32t")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 12.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qvrfq"]
+size = Vector2(12, 3.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4l21p"]
+size = Vector2(16, 5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c1vug"]
+size = Vector2(2, 2)
+
+[node name="Block" type="Node2D" unique_id=2045724571]
+texture_filter = 1
+script = ExtResource("1_xfwl5")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1923703022]
+sprite_frames = SubResource("SpriteFrames_qvrfq")
+autoplay = "default"
+
+[node name="FireZone" type="Area2D" parent="." unique_id=228704383]
+texture_filter = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FireZone" unique_id=1604493289]
+position = Vector2(0, -7.25)
+shape = SubResource("RectangleShape2D_qvrfq")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1495123968]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=798685533]
+position = Vector2(0, -5.5)
+shape = SubResource("RectangleShape2D_4l21p")
+
+[node name="KillZone" type="Area2D" parent="." unique_id=647572446]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KillZone" unique_id=1450075438]
+shape = SubResource("RectangleShape2D_c1vug")
+
+[connection signal="body_entered" from="FireZone" to="." method="_on_fire_zone_body_entered"]
+[connection signal="body_exited" from="FireZone" to="." method="_on_fire_zone_body_exited"]
+[connection signal="body_entered" from="KillZone" to="." method="_on_kill_zone_body_entered"]

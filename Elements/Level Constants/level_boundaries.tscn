@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://la3jb0872xfg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qvrfq"]
+size = Vector2(20, 416)
+
+[node name="LevelBoundaries" type="Node2D" unique_id=1550809977]
+
+[node name="BoundaryLeft" type="StaticBody2D" parent="." unique_id=750377675]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BoundaryLeft" unique_id=1256356931]
+position = Vector2(-43, -21)
+shape = SubResource("RectangleShape2D_qvrfq")
+
+[node name="BoundaryRight" type="StaticBody2D" parent="." unique_id=275059470]
+position = Vector2(534, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BoundaryRight" unique_id=408078974]
+position = Vector2(-43, -21)
+shape = SubResource("RectangleShape2D_qvrfq")

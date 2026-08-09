@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://citfe7853oya1"]
+
+[ext_resource type="Script" uid="uid://bqfv1dhm5mrdp" path="res://Elements/Ladder/ladder_bottom.gd" id="1_iueq7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qvrfq"]
+size = Vector2(26, 3)
+
+[node name="LadderBottom" type="Area2D" unique_id=228704383]
+texture_filter = 1
+script = ExtResource("1_iueq7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1604493289]
+position = Vector2(0, 6.5)
+shape = SubResource("RectangleShape2D_qvrfq")
+debug_color = Color(0.9177978, 0.28000537, 0.15720168, 0.41960785)
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="area_exited" from="." to="." method="_on_area_exited"]

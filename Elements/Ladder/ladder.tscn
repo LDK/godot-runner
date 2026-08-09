@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://dqlribbnm08oy"]
+
+[ext_resource type="Script" uid="uid://bd71wg4karxen" path="res://Elements/Ladder/ladder.gd" id="1_d47em"]
+[ext_resource type="Texture2D" uid="uid://dg3mnm3ieg82l" path="res://Assets/NES - Lode Runner - Miscellaneous - Tileset.png" id="2_io1sk"]
+[ext_resource type="Script" uid="uid://dgtl76vho5grb" path="res://Elements/Bar/climb_zone.gd" id="3_7y87q"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lqhsa"]
+atlas = ExtResource("2_io1sk")
+region = Rect2(32, 32, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qvrfq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lqhsa")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 12.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qvrfq"]
+size = Vector2(14, 16)
+
+[node name="Ladder" type="Node2D" unique_id=2045724571]
+texture_filter = 1
+script = ExtResource("1_d47em")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1923703022]
+sprite_frames = SubResource("SpriteFrames_qvrfq")
+autoplay = "default"
+
+[node name="ClimbZone" type="Area2D" parent="." unique_id=228704383]
+texture_filter = 1
+script = ExtResource("3_7y87q")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClimbZone" unique_id=1604493289]
+shape = SubResource("RectangleShape2D_qvrfq")
+
+[connection signal="body_entered" from="ClimbZone" to="." method="_on_climb_zone_body_entered"]
+[connection signal="body_exited" from="ClimbZone" to="." method="_on_climb_zone_body_exited"]

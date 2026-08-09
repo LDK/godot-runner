@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://q87xtt5lvavt"]
+
+[ext_resource type="PackedScene" uid="uid://caa1j61sy232w" path="res://Elements/HUD/hud.tscn" id="1_hydts"]
+[ext_resource type="Script" uid="uid://crc547i81p4hn" path="res://Elements/Level Constants/level.gd" id="1_kjnly"]
+[ext_resource type="PackedScene" uid="uid://la3jb0872xfg" path="res://Elements/Level Constants/level_boundaries.tscn" id="2_kjnly"]
+
+[node name="Level Constants" type="Node2D" unique_id=937608272]
+script = ExtResource("1_kjnly")
+
+[node name="HUD" parent="." unique_id=1505405376 instance=ExtResource("1_hydts")]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1451316613]
+position = Vector2(224, -18)
+zoom = Vector2(2, 2)
+
+[node name="BG" type="Control" parent="." unique_id=1634029156]
+z_index = -1
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="BG" unique_id=1142138248]
+z_index = -1
+layout_mode = 0
+offset_left = -33.0
+offset_top = -180.0
+offset_right = 481.0
+offset_bottom = 145.0
+color = Color(0, 0, 0, 1)
+
+[node name="LevelBoundaries" parent="." unique_id=1550809977 instance=ExtResource("2_kjnly")]

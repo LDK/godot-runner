@@ -1,0 +1,167 @@
+[gd_scene format=3 uid="uid://imus5m3h31dc"]
+
+[ext_resource type="Script" uid="uid://bt3nwedppskco" path="res://Items/Gold/gold.gd" id="1_1p357"]
+[ext_resource type="Texture2D" uid="uid://dg3mnm3ieg82l" path="res://Assets/NES - Lode Runner - Miscellaneous - Tileset.png" id="1_1rp5q"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qvrfq"]
+size = Vector2(16, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1p357"]
+atlas = ExtResource("1_1rp5q")
+region = Rect2(96, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v68ff"]
+atlas = ExtResource("1_1rp5q")
+region = Rect2(96, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5tshw"]
+atlas = ExtResource("1_1rp5q")
+region = Rect2(96, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qvrfq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v68ff")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5tshw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v68ff")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5tshw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v68ff")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5tshw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1p357")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 12.0
+}]
+
+[node name="Gold" type="Area2D" unique_id=1483243167]
+script = ExtResource("1_1p357")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=43972869]
+position = Vector2(0, 2)
+shape = SubResource("RectangleShape2D_qvrfq")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1175638887]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_qvrfq")
+frame_progress = 0.97115415
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
