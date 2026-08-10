@@ -153,6 +153,83 @@ func get_cell_center_global(cell: Vector2i) -> Vector2:
 	var local_center := map_to_local(cell)
 	return to_global(local_center)
 
+func find_platform_segments(platform: Dictionary) -> Array[Dictionary]:
+	var x: int = platform.startX
+	
+	var blocked: Array[int] = []
+	
+	while x <= platform.endX:
+		if platform_at(Vector2i(x, platform.y - 1)):
+			blocked.push_back(x)
+
+		x += 1
+	
+	if blocked.size():
+		if blocked.size() >= (platform.endX - platform.startX):
+			# Whole thing is blocked. Still return it so it can be used to check against for other platforms. 
+			platform.unwalkable = true
+			return [platform]
+		else:
+			var idx := 0
+			var blocked_areas: Array[Array] = []
+			var startX := blocked[0]
+			var lastX := -9999
+			var starts: Array[int] = []
+
+			while idx <= blocked.size() - 1:
+				if (
+					# Tile is not contiguous with previous tile and isn't the first tile in the block...
+					((not blocked[idx] == lastX + 1) and lastX != -9999) or
+					# ...or this is the last tile of the block & it doesn't go up to the edge of the underlying platform
+					(idx == blocked.size() - 1 and lastX < platform.endX)
+				):
+					blocked_areas.push_back([startX, (lastX if (idx != blocked.size() - 1) else blocked[idx])])
+					starts.push_back(startX)
+
+					# Start a new one
+					startX = blocked[idx]
+
+				lastX = blocked[idx]
+				idx += 1
+			
+			var new_platforms: Array[Dictionary] = []
+			var startBlocked := false
+			var endBlocked := false
+
+			idx = 0
+			
+			for area in blocked_areas:
+				var blockStart = blocked[0]
+				var blockEnd = blocked[1]
+
+				if blockStart <= platform.startX:
+					platform.startX = blockEnd + 1
+					startBlocked = true
+
+				if blockEnd >= platform.endX:
+					platform.endX = blockEnd - 1
+					endBlocked = true
+
+				var new_platform: Dictionary = platform.duplicate()
+				
+				if !startBlocked and !new_platforms.size():
+					new_platform.endX = blockStart - 1
+				else:
+					new_platform.startX = blockEnd + 1
+					new_platform.endX = blocked_areas[(idx + 1)][1] if (blocked_areas.size() > idx + 1) else area[1]
+				idx += 1
+
+				new_platforms.push_back(new_platform)
+			
+			if !endBlocked:
+				var new_platform: Dictionary = platform.duplicate()
+				new_platform.startX = lastX + 1
+				new_platforms.push_back(new_platform)
+
+			return new_platforms
+	else:
+		return [platform]
+
 func find_platforms() -> void:
 	var foundPlatform := false
 	var platformStart: Variant = null
@@ -187,17 +264,6 @@ func find_platforms() -> void:
 					platformEnd = x
 					platformDef = { "type": "platform", "y": y, "startX": platformStart, "endX": platformEnd, "id": pid, "entity_id": pid + eid_offset }
 
-					if platformStart == platformEnd:
-						var cell_id = get_cell_alternative_tile(Vector2i(platformStart, y))
-						if cell_id == 3:
-							#print("that's just a ladder piece", cell_coords)
-							pass
-						else:
-							platforms.push_back(platformDef)
-							pid += 1
-					else:
-						platforms.push_back(platformDef)
-						pid += 1
 				else:
 					allLadders = false
 
@@ -218,17 +284,6 @@ func find_platforms() -> void:
 				platformEnd = x
 				platformDef = { "type": "platform", "y": y, "startX": platformStart, "endX": platformEnd, "id": pid, "entity_id": pid + eid_offset }
 		
-				if platformStart == platformEnd:
-					var cell_id = get_cell_alternative_tile(Vector2i(platformStart, y))
-					if cell_id == 3:
-						#print("that's also just a ladder piece", cell_coords)
-						pass
-					else:
-						platforms.push_back(platformDef)
-						pid += 1
-				else:
-					platforms.push_back(platformDef)
-					pid += 1
 			else:
 				allLadders = false
 
@@ -236,6 +291,33 @@ func find_platforms() -> void:
 			y = cell_coords.y
 
 		x = cell_coords.x
+		
+		if platformDef:
+			var segments := find_platform_segments(platformDef)
+			print("segments: ", segments.size())
+
+			if segments.size() == 1:
+				if platformStart == platformEnd:
+					var cell_id = get_cell_alternative_tile(Vector2i(platformStart, y))
+					if cell_id == 3:
+						#print("that's also just a ladder piece", cell_coords)
+						pass
+					else:
+						print("push def ", pid, " ", platformDef.startX, "-", platformDef.endX)
+						platforms.push_back(platformDef)
+						pid += 1
+				else:
+					print("push def ", pid, " ", platformDef.startX, "-", platformDef.endX)
+					platforms.push_back(platformDef)
+					pid += 1
+			else:
+				for segment in segments:
+					segment.id = pid
+					segment.entity_id = pid + eid_offset
+					print("push segment ", pid, " ", segment.startX, "-", segment.endX)
+					platforms.push_back(segment)
+					pid += 1
+
 
 func check_ladder_at_coords(x: int, y: int, dict_arr: Array[int]) -> void:
 	var tile_id = get_cell_alternative_tile(Vector2i(x,y))
@@ -247,6 +329,9 @@ func check_ladder_at_coords(x: int, y: int, dict_arr: Array[int]) -> void:
 
 func find_platform_drops() -> void:
 	platforms.sort_custom(sort_dict_y_asc)
+
+	var blockedLeft := false
+	var blockedRight := false
 
 	for platform in platforms:
 		var y = platform.y + 1
@@ -267,9 +352,18 @@ func find_platform_drops() -> void:
 
 		if get_cell_alternative_tile(Vector2i(rightX, platform.y - 1)) == 4:
 			barRight = true
+		
+		#if platform_at(Vector2i(leftX, platform.y)):
+		if get_cell_alternative_tile(Vector2i(leftX, platform.y)) in [1,2,3]:
+			blockedLeft = true
+			print("Platform ", platform.entity_id, " is blocked to the left")
+
+		if get_cell_alternative_tile(Vector2i(rightX, platform.y)) in [1,2,3]:
+			blockedRight = true
+			print("Platform ", platform.entity_id, " is blocked to the right")
 
 		while y <= bot_right.y:
-			if !dropLeft and !barLeft:
+			if !dropLeft and !barLeft and !blockedLeft:
 				var p = platform_at(Vector2i(leftX, y))
 				var l = ladder_at(Vector2i(leftX, y))
 				var b = bar_at(Vector2i(leftX, y))
@@ -287,7 +381,7 @@ func find_platform_drops() -> void:
 					if b.entity_id not in bids:
 						bids.push_back(b.entity_id)
 
-			if !dropRight and !barRight:
+			if !dropRight and !barRight and !blockedRight:
 				var p = platform_at(Vector2i(rightX, y))
 				var l = ladder_at(Vector2i(rightX, y))
 				var b = bar_at(Vector2i(rightX, y))
@@ -399,6 +493,8 @@ func ladder_at(coords: Vector2i) -> Variant:
 	return null
 
 func entity_at(coords: Vector2i) -> Variant:
+	if (coords.x == 5 and coords.y < 6 and coords.y > -3):
+		print("entity at ", coords)
 	var p = platform_at(coords)
 	
 	if p:
@@ -575,6 +671,8 @@ func build_entity_list() -> Dictionary:
 		entities[entity.id] = entity
 
 	for platform in platforms:
+		if platform.has('unwalkable'):
+			continue
 		var entity: Dictionary = create_entity('platform', platform)
 		entities[entity.id] = entity
 
@@ -668,7 +766,6 @@ func add_bar_drop_lists() -> void:
 func _ready() -> void:
 	# find_ladders uses a different sort, so let's get it out of the way first :)
 	find_ladders()
-	print("ladders #: ", ladders.size())
 	used_cells.sort_custom(sort_y_asc_x_asc)
 	find_platforms()
 	find_bars()
@@ -676,7 +773,7 @@ func _ready() -> void:
 	find_platform_bars()
 	find_platform_ladders()
 	find_platform_drops()
-	
+		
 	find_ladder_platforms()
 	find_ladder_ladders()
 	find_ladder_bars()
@@ -686,15 +783,12 @@ func _ready() -> void:
 	add_bar_drop_lists()
 
 	entities = build_entity_list()
-	
-	print("6, -7: ", entity_at(Vector2i(6, -7)))
-	
+
 	find_landing_spots()
-	
-	print("Top left is: ", map_to_local(top_left))
-	print("Bottom right is: ", map_to_local(bot_right))
-	
-	print("26, -5 is: ", map_to_local(Vector2i(26, -5)))
+
+	print("ENTITIES:")
+	for entity in entities:
+		print(entities[entity])
 
 	#print("landing spots", level_drops)
 
@@ -709,7 +803,7 @@ func _ready() -> void:
 	#print("platforms:")
 	#for platform in platforms:
 		#print(platform)
-	#
+
 	
 	#print(build_entity_list())
 	#print("------------")
@@ -823,6 +917,8 @@ func find_landing_spots() -> void:
 			if droppable:
 				var drop = find_drop_from(Vector2i(x, y))
 				if drop:
+					if x == 5 and y == 0:
+						print("drop from 5,0: ", drop)
 					level_drops[Vector2i(x, y)] = drop
 
 			y += 1

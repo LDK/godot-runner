@@ -42,8 +42,6 @@ func my_area() -> Variant:
 		var p = map.platform_at(Vector2i(cell_coords.x, cell_coords.y + 1))
 		if p:
 			return p
-		else:
-			print("No platform found at ", Vector2i(cell_coords.x, cell_coords.y + 1))
 
 
 	if state == RunnerState.GROUND:
