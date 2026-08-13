@@ -254,12 +254,17 @@ texture = ExtResource("5_epg4t")
 
 [node name="RespawnTimer" type="Timer" parent="." unique_id=1735848676]
 
+[node name="GamePlanTimer" type="Timer" parent="." unique_id=2071480254]
+one_shot = true
+
 [node name="StuckBox" type="StaticBody2D" parent="." unique_id=1551253405]
+z_index = 1
 position = Vector2(0, -8)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StuckBox" unique_id=391864175]
 shape = SubResource("RectangleShape2D_pik8p")
 disabled = true
+debug_color = Color(0.9762555, 0, 0.40962628, 0.8156863)
 
 [node name="HurtBox" type="Area2D" parent="." unique_id=1029481520]
 
@@ -271,4 +276,5 @@ shape = SubResource("RectangleShape2D_c1vug")
 [connection signal="area_entered" from="ClimbZone" to="." method="_on_climb_zone_area_entered"]
 [connection signal="timeout" from="RecoverTimer" to="." method="_on_recover_timer_timeout"]
 [connection signal="timeout" from="RespawnTimer" to="." method="_on_respawn_timer_timeout"]
+[connection signal="timeout" from="GamePlanTimer" to="." method="_on_game_plan_timer_timeout"]
 [connection signal="body_entered" from="HurtBox" to="." method="_on_hurt_box_body_entered"]

@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://la3jb0872xfg" path="res://Elements/Level Constants/level_boundaries.tscn" id="2_kjnly"]
 
 [node name="Level Constants" type="Node2D" unique_id=937608272]
+process_mode = 3
 script = ExtResource("1_kjnly")
 
 [node name="HUD" parent="." unique_id=1505405376 instance=ExtResource("1_hydts")]

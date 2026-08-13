@@ -1,0 +1,154 @@
+[gd_scene format=4 uid="uid://cs2uy3o0c0j61"]
+
+[ext_resource type="Script" uid="uid://bpmvxfw2yw3a6" path="res://turtle_boss_level.gd" id="1_vnf8x"]
+[ext_resource type="TileSet" uid="uid://d33t0klsjh0l8" path="res://Assets/tileset.tres" id="2_j5a51"]
+[ext_resource type="Script" uid="uid://davi5rtkmi7pl" path="res://Elements/Map/map.gd" id="3_xvgi4"]
+[ext_resource type="Script" uid="uid://c7ixpifllympg" path="res://turtle_boss.gd" id="4_j5a51"]
+[ext_resource type="PackedScene" uid="uid://q87xtt5lvavt" path="res://Elements/Level Constants/level_constants.tscn" id="4_ybbha"]
+[ext_resource type="Texture2D" uid="uid://bdruf5pr7uktm" path="res://Assets/taka.png" id="5_jspis"]
+[ext_resource type="PackedScene" uid="uid://cgavv5lbnc0ai" path="res://Characters/Hero/hero.tscn" id="6_fdfgp"]
+[ext_resource type="PackedScene" uid="uid://edt64uft6c8s" path="res://Elements/TurtleLeg/turtle_leg.tscn" id="7_vrv0m"]
+[ext_resource type="Texture2D" uid="uid://wjjwq0fr8upq" path="res://Assets/turtle-neck.png" id="7_xvgi4"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_4l21p"]
+radius = 13.000002
+height = 44.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qvrfq"]
+radius = 12.000002
+height = 56.0
+
+[node name="Turtle Boss Level" type="Node2D" unique_id=1260112975]
+script = ExtResource("1_vnf8x")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1388548250]
+tile_map_data = PackedByteArray("AAAAAPn/AQAAAAAABAABAPn/AQAAAAAABAACAPn/AQAAAAAABAADAPn/AQAAAAAABAAEAPn/AQAAAAAABAAFAPn/AQAAAAAABAAGAPn/AQAAAAAABAAHAPn/AQAAAAAABAAIAPn/AQAAAAAABAAJAPn/AQAAAAAABAAKAPn/AQAAAAAABAALAPn/AQAAAAAABAAMAPn/AQAAAAAABAANAPn/AQAAAAAABAAOAPn/AQAAAAAABAAPAPn/AQAAAAAABAAQAPn/AQAAAAAABAARAPn/AQAAAAAABAASAPn/AQAAAAAABAATAPn/AQAAAAAABAAUAPn/AQAAAAAABAAVAPn/AQAAAAAABAAWAPn/AQAAAAAABAAXAPn/AQAAAAAABAAYAPn/AQAAAAAABAAZAPn/AQAAAAAABAAaAPn/AQAAAAAABAAbAPn/AQAAAAAABAD///r/AQAAAAAAAwD///v/AQAAAAAAAwD///z/AQAAAAAAAwD///3/AQAAAAAAAwD///7/AQAAAAAAAwD/////AQAAAAAAAwD//wAAAQAAAAAAAwD//wEAAQAAAAAAAwD//wIAAQAAAAAAAwD//wMAAQAAAAAAAwD//wQAAQAAAAAAAwD//wUAAQAAAAAAAwD//wYAAQAAAAAAAwAcAPr/AQAAAAAAAwAcAPv/AQAAAAAAAwAcAPz/AQAAAAAAAwAcAP3/AQAAAAAAAwAcAP7/AQAAAAAAAwAcAP//AQAAAAAAAwAcAAAAAQAAAAAAAwAcAAEAAQAAAAAAAwAcAAIAAQAAAAAAAwAcAAMAAQAAAAAAAwAcAAQAAQAAAAAAAwAcAAUAAQAAAAAAAwAcAAYAAQAAAAAAAwALAAcAAQAAAAAAAgAKAAcAAQAAAAAAAgAJAAcAAQAAAAAAAgAIAAcAAQAAAAAAAgAHAAcAAQAAAAAAAgAGAAcAAQAAAAAAAgAFAAcAAQAAAAAAAgAEAAcAAQAAAAAAAgADAAcAAQAAAAAAAgACAAcAAQAAAAAAAgABAAcAAQAAAAAAAgAAAAcAAQAAAAAAAgD//wcAAQAAAAAAAgD+/wcAAQAAAAAAAgD+/wgAAQAAAAAAAgD//wgAAQAAAAAAAgAAAAgAAQAAAAAAAgABAAgAAQAAAAAAAgACAAgAAQAAAAAAAgADAAgAAQAAAAAAAgAEAAgAAQAAAAAAAgAFAAgAAQAAAAAAAgAGAAgAAQAAAAAAAgAHAAgAAQAAAAAAAgAIAAgAAQAAAAAAAgAJAAgAAQAAAAAAAgAKAAgAAQAAAAAAAgALAAgAAQAAAAAAAgAMAAgAAQAAAAAAAgAMAAcAAQAAAAAAAgANAAcAAQAAAAAAAgANAAgAAQAAAAAAAgAOAAgAAQAAAAAAAgAOAAcAAQAAAAAAAgAPAAcAAQAAAAAAAgAPAAgAAQAAAAAAAgAQAAgAAQAAAAAAAgAQAAcAAQAAAAAAAgARAAcAAQAAAAAAAgARAAgAAQAAAAAAAgASAAgAAQAAAAAAAgASAAcAAQAAAAAAAgATAAcAAQAAAAAAAgATAAgAAQAAAAAAAgAUAAgAAQAAAAAAAgAUAAcAAQAAAAAAAgAVAAcAAQAAAAAAAgAVAAgAAQAAAAAAAgAWAAgAAQAAAAAAAgAWAAcAAQAAAAAAAgAXAAcAAQAAAAAAAgAXAAgAAQAAAAAAAgAYAAgAAQAAAAAAAgAYAAcAAQAAAAAAAgAZAAcAAQAAAAAAAgAZAAgAAQAAAAAAAgAaAAgAAQAAAAAAAgAaAAcAAQAAAAAAAgAbAAcAAQAAAAAAAgAbAAgAAQAAAAAAAgAcAAgAAQAAAAAAAgAcAAcAAQAAAAAAAgAdAAcAAQAAAAAAAgAdAAgAAQAAAAAAAgA=")
+tile_set = ExtResource("2_j5a51")
+script = ExtResource("3_xvgi4")
+
+[node name="Turtle Boss" type="Node2D" parent="." unique_id=1210602214 node_paths=PackedStringArray("hero")]
+script = ExtResource("4_j5a51")
+hero = NodePath("../Hero")
+
+[node name="TurtleBody" type="TileMapLayer" parent="Turtle Boss" unique_id=1557581754]
+tile_map_data = PackedByteArray("AAAKAAEAAQAAAAAAAQAKAAIAAQAAAAAAAQALAAEAAQAAAAAAAQALAAIAAQAAAAAAAQALAAMAAQAAAAAAAQAMAP//AQAAAAAABgAMAAEAAQAAAAAAAQAMAAIAAQAAAAAAAQAMAAMAAQAAAAAAAQANAP7/AQAAAAAABgANAP//AQAAAAAABgANAAEAAQAAAAAABQANAAIAAQAAAAAAAQANAAMAAQAAAAAAAQAOAP//AQAAAAAABgAOAAEAAQAAAAAAAQAOAAIAAQAAAAAAAQAOAAMAAQAAAAAAAQAPAP3/AQAAAAAABgAPAP//AQAAAAAABgAPAAEAAQAAAAAABQAPAAIAAQAAAAAAAQAPAAMAAQAAAAAAAQAQAP3/AQAAAAAABgAQAP//AQAAAAAABgAQAAEAAQAAAAAAAQAQAAIAAQAAAAAAAQAQAAMAAQAAAAAAAQARAP7/AQAAAAAABgARAP//AQAAAAAABgARAAEAAQAAAAAAAwARAAIAAQAAAAAAAwARAAMAAQAAAAAAAwASAP//AQAAAAAABgASAAEAAQAAAAAAAQASAAIAAQAAAAAAAQASAAMAAQAAAAAAAQATAAEAAQAAAAAABQATAAIAAQAAAAAAAQATAAMAAQAAAAAAAQAUAAEAAQAAAAAAAQAUAAIAAQAAAAAAAQAUAAMAAQAAAAAAAQALAAAAAQAAAAAAAQARAP3/AQAAAAAABgARAAQAAQAAAAAAAwARAAUAAQAAAAAAAwARAAYAAQAAAAAAAwASAP3/AQAAAAAABgASAP7/AQAAAAAABgATAP3/AQAAAAAABgATAP7/AQAAAAAABgATAP//AQAAAAAABgAUAP7/AQAAAAAABgAUAP//AQAAAAAABgAVAP7/AQAAAAAABgAVAP//AQAAAAAABgAVAAEAAQAAAAAABQAVAAIAAQAAAAAAAQAVAAMAAQAAAAAAAQAWAP//AQAAAAAABgAWAAEAAQAAAAAAAQAWAAIAAQAAAAAAAQAWAAMAAQAAAAAAAQAXAAAAAQAAAAAAAQAXAAEAAQAAAAAAAQAXAAIAAQAAAAAAAQAXAAMAAQAAAAAAAQAYAAEAAQAAAAAAAQAYAAIAAQAAAAAAAQAYAAMAAQAAAAAAAQAKAAAAAQAAAAAAAQAOAP7/AQAAAAAABgAPAP7/AQAAAAAABgAQAP7/AQAAAAAABgAYAAAAAQAAAAAAAQAZAAEAAQAAAAAABgAZAAIAAQAAAAAABgAaAAIAAQAAAAAABgAaAAMAAQAAAAAABgAZAAMAAQAAAAAABgAbAAMAAQAAAAAABgAXAP//AQAAAAAABgAQAPz/AQAAAAAABgASAPz/AQAAAAAABgARAPz/AQAAAAAABQA=")
+tile_set = ExtResource("2_j5a51")
+
+[node name="TurtleLeg" parent="Turtle Boss" unique_id=2045724571 instance=ExtResource("7_vrv0m")]
+position = Vector2(184, 72)
+slot = 1
+
+[node name="TurtleLeg2" parent="Turtle Boss" unique_id=1339586104 instance=ExtResource("7_vrv0m")]
+z_index = -1
+position = Vector2(232, 73)
+slot = 2
+
+[node name="TurtleLeg3" parent="Turtle Boss" unique_id=1626571885 instance=ExtResource("7_vrv0m")]
+position = Vector2(328, 73)
+slot = 3
+
+[node name="TurtleLeg4" parent="Turtle Boss" unique_id=2118915895 instance=ExtResource("7_vrv0m")]
+z_index = -1
+position = Vector2(376, 73)
+slot = 4
+
+[node name="SellTimer" type="Timer" parent="Turtle Boss" unique_id=2004318204]
+one_shot = true
+
+[node name="Neck" type="Node2D" parent="Turtle Boss" unique_id=1577684429]
+position = Vector2(155, 22)
+
+[node name="Sprite2D" type="Sprite2D" parent="Turtle Boss/Neck" unique_id=469905528]
+z_index = -1
+texture = ExtResource("7_xvgi4")
+
+[node name="Neck1" type="Sprite2D" parent="Turtle Boss/Neck" unique_id=1274112426]
+z_index = -1
+texture = ExtResource("7_xvgi4")
+
+[node name="Neck2" type="Sprite2D" parent="Turtle Boss/Neck/Neck1" unique_id=1845528962]
+texture = ExtResource("7_xvgi4")
+
+[node name="Neck3" type="Sprite2D" parent="Turtle Boss/Neck/Neck1/Neck2" unique_id=962690046]
+texture = ExtResource("7_xvgi4")
+
+[node name="TurtleHead" type="Sprite2D" parent="Turtle Boss/Neck/Neck1/Neck2/Neck3" unique_id=1720938697]
+z_index = 2
+position = Vector2(-25, -1)
+texture = ExtResource("5_jspis")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Turtle Boss/Neck/Neck1/Neck2/Neck3/TurtleHead" unique_id=1779977736]
+rotation = 1.5707964
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Turtle Boss/Neck/Neck1/Neck2/Neck3/TurtleHead/StaticBody2D" unique_id=1608976637]
+position = Vector2(-6, 0)
+shape = SubResource("CapsuleShape2D_4l21p")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Turtle Boss/Neck/Neck1/Neck2/Neck3/TurtleHead/StaticBody2D" unique_id=607509243]
+position = Vector2(5, 4)
+shape = SubResource("CapsuleShape2D_qvrfq")
+
+[node name="Level Constants" parent="." unique_id=937608272 node_paths=PackedStringArray("hero", "map") instance=ExtResource("4_ybbha")]
+hero = NodePath("../Hero")
+map = NodePath("../TileMapLayer")
+
+[node name="Hero" parent="." unique_id=892405194 instance=ExtResource("6_fdfgp")]
+position = Vector2(37, 103)
+
+[connection signal="area_entered" from="TileMapLayer/Bar" to="TileMapLayer/Bar" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/Bar" to="TileMapLayer/Bar" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144170" to="TileMapLayer/@Area2D@144170" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144170" to="TileMapLayer/@Area2D@144170" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144171" to="TileMapLayer/@Area2D@144171" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144171" to="TileMapLayer/@Area2D@144171" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144172" to="TileMapLayer/@Area2D@144172" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144172" to="TileMapLayer/@Area2D@144172" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144173" to="TileMapLayer/@Area2D@144173" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144173" to="TileMapLayer/@Area2D@144173" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144174" to="TileMapLayer/@Area2D@144174" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144174" to="TileMapLayer/@Area2D@144174" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144175" to="TileMapLayer/@Area2D@144175" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144175" to="TileMapLayer/@Area2D@144175" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144176" to="TileMapLayer/@Area2D@144176" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144176" to="TileMapLayer/@Area2D@144176" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144177" to="TileMapLayer/@Area2D@144177" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144177" to="TileMapLayer/@Area2D@144177" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144178" to="TileMapLayer/@Area2D@144178" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144178" to="TileMapLayer/@Area2D@144178" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144179" to="TileMapLayer/@Area2D@144179" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144179" to="TileMapLayer/@Area2D@144179" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144180" to="TileMapLayer/@Area2D@144180" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144180" to="TileMapLayer/@Area2D@144180" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144181" to="TileMapLayer/@Area2D@144181" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144181" to="TileMapLayer/@Area2D@144181" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144182" to="TileMapLayer/@Area2D@144182" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144182" to="TileMapLayer/@Area2D@144182" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144183" to="TileMapLayer/@Area2D@144183" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144183" to="TileMapLayer/@Area2D@144183" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144184" to="TileMapLayer/@Area2D@144184" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144184" to="TileMapLayer/@Area2D@144184" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144185" to="TileMapLayer/@Area2D@144185" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144185" to="TileMapLayer/@Area2D@144185" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144186" to="TileMapLayer/@Area2D@144186" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144186" to="TileMapLayer/@Area2D@144186" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144187" to="TileMapLayer/@Area2D@144187" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144187" to="TileMapLayer/@Area2D@144187" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144188" to="TileMapLayer/@Area2D@144188" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144188" to="TileMapLayer/@Area2D@144188" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144189" to="TileMapLayer/@Area2D@144189" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144189" to="TileMapLayer/@Area2D@144189" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144190" to="TileMapLayer/@Area2D@144190" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144190" to="TileMapLayer/@Area2D@144190" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144191" to="TileMapLayer/@Area2D@144191" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144191" to="TileMapLayer/@Area2D@144191" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144192" to="TileMapLayer/@Area2D@144192" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144192" to="TileMapLayer/@Area2D@144192" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144193" to="TileMapLayer/@Area2D@144193" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144193" to="TileMapLayer/@Area2D@144193" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144194" to="TileMapLayer/@Area2D@144194" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144194" to="TileMapLayer/@Area2D@144194" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144195" to="TileMapLayer/@Area2D@144195" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144195" to="TileMapLayer/@Area2D@144195" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@144196" to="TileMapLayer/@Area2D@144196" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@144196" to="TileMapLayer/@Area2D@144196" method="_on_area_exited"]
+[connection signal="timeout" from="Turtle Boss/SellTimer" to="Turtle Boss" method="_on_sell_timer_timeout"]

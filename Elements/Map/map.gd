@@ -3,7 +3,7 @@ class_name LevelMap
 
 @onready var scene: Node2D = get_tree().current_scene
 
-var tile_types := ['Empty', 'Brick', 'Block', 'Ladder', 'Bar']
+var tile_types := ['Empty', 'Brick', 'Block', 'Ladder', 'Bar', 'GoldLadder']
 
 var entities: Dictionary = {}
 
@@ -117,20 +117,29 @@ func find_ladders() -> void:
 
 	var vert_cells = used_cells
 	vert_cells.sort_custom(sort_x_asc_y_asc)
+	var golden := false
 
 	for cell_coords in vert_cells:
 		var ladderDef: Variant = null
 		var id := get_cell_alternative_tile(cell_coords)
-		
+
+		if id == 7: # Golden Ladder
+			golden = true
+
 		if cell_coords.y != (y + 1):
 			if foundLadder and ladderStart:
 				foundLadder = false
 				ladderEnd = y
 				ladderDef = { "type": "ladder", "x": x, "startY": ladderStart, "endY": ladderEnd, "id": lid, "entity_id": lid }
+
+				if golden:
+					ladderDef.golden = true
+
 				ladders.push_back(ladderDef)
+				golden = false
 				lid += 1
 			
-		if (id == 3): # Ladder
+		if (id in [3, 7]): # Ladder
 			if !foundLadder:
 				foundLadder = true
 				ladderStart = cell_coords.y
@@ -138,7 +147,12 @@ func find_ladders() -> void:
 			foundLadder = false
 			ladderEnd = y
 			ladderDef = { "type": "ladder", "x": x, "startY": ladderStart, "endY": ladderEnd, "id": lid, "entity_id": lid }
+
+			if golden:
+				ladderDef.golden = true
+
 			ladders.push_back(ladderDef)
+			golden = false
 			lid += 1
 
 		if ladderDef:
@@ -200,7 +214,7 @@ func find_platform_segments(platform: Dictionary) -> Array[Dictionary]:
 			
 			for area in blocked_areas:
 				var blockStart = blocked[0]
-				var blockEnd = blocked[1]
+				var blockEnd = blocked[1] if blocked.size() > 1 else blocked[0]
 
 				if blockStart <= platform.startX:
 					platform.startX = blockEnd + 1
@@ -246,8 +260,6 @@ func find_platforms() -> void:
 
 	var eid_offset = ladders.size()
 
-	print("used cells", used_cells.size())
-
 	var idx = -1
 
 	for cell_coords in used_cells:
@@ -263,7 +275,6 @@ func find_platforms() -> void:
 				if not allLadders:
 					platformEnd = x
 					platformDef = { "type": "platform", "y": y, "startX": platformStart, "endX": platformEnd, "id": pid, "entity_id": pid + eid_offset }
-
 				else:
 					allLadders = false
 
@@ -271,17 +282,17 @@ func find_platforms() -> void:
 			if !foundPlatform:
 				foundPlatform = true
 				platformStart = cell_coords.x
-				if id == 3:
+				if id in [3, 7]:
 					allLadders = true
 			
-			if id != 3:
+			if id not in [3, 7]:
 				allLadders= false
 
 		if foundPlatform and (id not in platform_types or idx == used_cells.size() - 1):
 			foundPlatform = false
 			
 			if not allLadders:
-				platformEnd = x
+				platformEnd = cell_coords.x if idx == used_cells.size() - 1 else x
 				platformDef = { "type": "platform", "y": y, "startX": platformStart, "endX": platformEnd, "id": pid, "entity_id": pid + eid_offset }
 		
 			else:
@@ -294,27 +305,23 @@ func find_platforms() -> void:
 		
 		if platformDef:
 			var segments := find_platform_segments(platformDef)
-			print("segments: ", segments.size())
 
 			if segments.size() == 1:
 				if platformStart == platformEnd:
 					var cell_id = get_cell_alternative_tile(Vector2i(platformStart, y))
-					if cell_id == 3:
+					if cell_id in [3, 7]:
 						#print("that's also just a ladder piece", cell_coords)
 						pass
 					else:
-						print("push def ", pid, " ", platformDef.startX, "-", platformDef.endX)
 						platforms.push_back(platformDef)
 						pid += 1
 				else:
-					print("push def ", pid, " ", platformDef.startX, "-", platformDef.endX)
 					platforms.push_back(platformDef)
 					pid += 1
 			else:
 				for segment in segments:
 					segment.id = pid
 					segment.entity_id = pid + eid_offset
-					print("push segment ", pid, " ", segment.startX, "-", segment.endX)
 					platforms.push_back(segment)
 					pid += 1
 
@@ -322,7 +329,7 @@ func find_platforms() -> void:
 func check_ladder_at_coords(x: int, y: int, dict_arr: Array[int]) -> void:
 	var tile_id = get_cell_alternative_tile(Vector2i(x,y))
 
-	if (tile_id == 3): # Ladder
+	if (tile_id in [3, 7]): # Ladder
 		for ladder in ladders:
 			if ladder.x == x and (ladder.startY == y or ladder.endY == y):
 				dict_arr.push_back(ladder.entity_id)
@@ -356,11 +363,9 @@ func find_platform_drops() -> void:
 		#if platform_at(Vector2i(leftX, platform.y)):
 		if get_cell_alternative_tile(Vector2i(leftX, platform.y)) in [1,2,3]:
 			blockedLeft = true
-			print("Platform ", platform.entity_id, " is blocked to the left")
 
 		if get_cell_alternative_tile(Vector2i(rightX, platform.y)) in [1,2,3]:
 			blockedRight = true
-			print("Platform ", platform.entity_id, " is blocked to the right")
 
 		while y <= bot_right.y:
 			if !dropLeft and !barLeft and !blockedLeft:
@@ -462,8 +467,6 @@ func find_bar_drop_platforms(bar: Dictionary) -> void:
 			x += 1
 	
 	coveredX.sort()
-	#print("that bar can get you to these platforms via drop: ")
-	#print(plats)
 	
 	pids.sort()
 	bar.platforms = pids
@@ -493,8 +496,6 @@ func ladder_at(coords: Vector2i) -> Variant:
 	return null
 
 func entity_at(coords: Vector2i) -> Variant:
-	if (coords.x == 5 and coords.y < 6 and coords.y > -3):
-		print("entity at ", coords)
 	var p = platform_at(coords)
 	
 	if p:
@@ -678,7 +679,6 @@ func build_entity_list() -> Dictionary:
 
 	for bar in bars:
 		var entity: Dictionary = create_entity('bar', bar)
-		#print("bar: ", entity)
 		entities[entity.id] = entity
 
 	return entities
@@ -874,6 +874,8 @@ func add_ladder_zones(ladder: Dictionary) -> void:
 	var top_instance = LADDER_TOP_SCENE.instantiate()
 	var bottom_instance = LADDER_BOTTOM_SCENE.instantiate()
 
+	top_instance.golden = true if (ladder.has('golden') and ladder.golden) else false
+
 	var startYGlobal = get_cell_center_global(Vector2i(0, ladder.startY))
 	var endYGlobal = get_cell_center_global(Vector2i(0, ladder.endY))
 	var xGlobal = get_cell_center_global(Vector2i(ladder.x, ladder.endY)).x
@@ -917,8 +919,6 @@ func find_landing_spots() -> void:
 			if droppable:
 				var drop = find_drop_from(Vector2i(x, y))
 				if drop:
-					if x == 5 and y == 0:
-						print("drop from 5,0: ", drop)
 					level_drops[Vector2i(x, y)] = drop
 
 			y += 1

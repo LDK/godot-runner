@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name Runner
 
-enum RunnerState { GROUND, HANGING, FALLING, CLIMBING, STUCK, DEAD, RECOVERING, RESPAWNING }
+enum RunnerState { GROUND, HANGING, FALLING, CLIMBING, STUCK, DEAD, RECOVERING, RESPAWNING, FLUNG }
 var stateNames:Array[String] = ['Ground', 'Hanging', 'Falling', 'Climbing', 'Stuck', 'Dead', 'Recovering', 'Respawning']
 
 @onready var sprite:AnimatedSprite2D = $AnimatedSprite2D
@@ -81,8 +81,6 @@ func my_area() -> Variant:
 		# Check for where the runner will land.
 		if map.level_drops.has(cell_coords):
 			return map.level_drops[cell_coords]
-	
-	print("returning null from ", cell_coords)
 	
 	return map.entity_at(cell_coords) # This will take one last pass at finding something or return null
 

@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://edt64uft6c8s"]
+
+[ext_resource type="Script" uid="uid://dnfme1kr12bgs" path="res://Elements/TurtleLeg/turtle_leg.gd" id="1_mkms7"]
+[ext_resource type="Shader" uid="uid://bfewmh7uer4bl" path="res://Elements/GoldBrick/gold_brick.gdshader" id="2_6f5ma"]
+[ext_resource type="Texture2D" uid="uid://dg3mnm3ieg82l" path="res://Assets/NES - Lode Runner - Miscellaneous - Tileset.png" id="3_pjeob"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_43t78"]
+shader = ExtResource("2_6f5ma")
+shader_parameter/target_color = Color(0, 0.27450982, 0.015686275, 1)
+shader_parameter/mix_weight = 0.75200003572
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5d32t"]
+atlas = ExtResource("3_pjeob")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qvrfq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5d32t")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 12.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4l21p"]
+size = Vector2(16, 48)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c1vug"]
+size = Vector2(8, 2)
+
+[node name="TurtleLeg" type="Node2D" unique_id=2045724571]
+texture_filter = 1
+script = ExtResource("1_mkms7")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1923703022]
+material = SubResource("ShaderMaterial_43t78")
+sprite_frames = SubResource("SpriteFrames_qvrfq")
+autoplay = "default"
+
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="." unique_id=1174094687]
+material = SubResource("ShaderMaterial_43t78")
+position = Vector2(0, 16)
+sprite_frames = SubResource("SpriteFrames_qvrfq")
+autoplay = "default"
+
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="." unique_id=787700162]
+material = SubResource("ShaderMaterial_43t78")
+position = Vector2(0, 32)
+sprite_frames = SubResource("SpriteFrames_qvrfq")
+autoplay = "default"
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1495123968]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=798685533]
+position = Vector2(0, 16)
+shape = SubResource("RectangleShape2D_4l21p")
+
+[node name="KillZone" type="Area2D" parent="." unique_id=647572446]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KillZone" unique_id=1450075438]
+position = Vector2(0, 40)
+shape = SubResource("RectangleShape2D_c1vug")
+
+[node name="Timer" type="Timer" parent="." unique_id=1813400064]
+one_shot = true
+
+[connection signal="body_entered" from="KillZone" to="." method="_on_kill_zone_body_entered"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

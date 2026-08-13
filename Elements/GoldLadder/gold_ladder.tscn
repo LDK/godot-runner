@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://2p4rfelid7ej"]
+
+[ext_resource type="Script" uid="uid://ca7sl1p1srade" path="res://Elements/GoldLadder/gold_ladder.gd" id="1_ok7n7"]
+[ext_resource type="Shader" uid="uid://bfewmh7uer4bl" path="res://Elements/GoldBrick/gold_brick.gdshader" id="2_1tou6"]
+[ext_resource type="Texture2D" uid="uid://dg3mnm3ieg82l" path="res://Assets/NES - Lode Runner - Miscellaneous - Tileset.png" id="2_ye5mf"]
+[ext_resource type="Script" uid="uid://dgtl76vho5grb" path="res://Elements/Bar/climb_zone.gd" id="3_ljua3"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1tou6"]
+shader = ExtResource("2_1tou6")
+shader_parameter/target_color = Color(1, 0.84, 0, 1)
+shader_parameter/mix_weight = 0.5290000251275
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lqhsa"]
+atlas = ExtResource("2_ye5mf")
+region = Rect2(32, 32, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qvrfq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lqhsa")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 12.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qvrfq"]
+size = Vector2(14, 16)
+
+[node name="GoldLadder" type="Node2D" unique_id=2045724571]
+texture_filter = 1
+script = ExtResource("1_ok7n7")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1923703022]
+visible = false
+material = SubResource("ShaderMaterial_1tou6")
+sprite_frames = SubResource("SpriteFrames_qvrfq")
+autoplay = "default"
+
+[node name="ClimbZone" type="Area2D" parent="." unique_id=228704383]
+texture_filter = 1
+monitoring = false
+script = ExtResource("3_ljua3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClimbZone" unique_id=1604493289]
+shape = SubResource("RectangleShape2D_qvrfq")
+
+[connection signal="body_entered" from="ClimbZone" to="." method="_on_climb_zone_body_entered"]
+[connection signal="body_exited" from="ClimbZone" to="." method="_on_climb_zone_body_exited"]

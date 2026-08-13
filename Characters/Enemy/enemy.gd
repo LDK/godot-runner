@@ -3,6 +3,7 @@ class_name Enemy
 
 @onready var recover_timer: Timer = $RecoverTimer
 @onready var respawn_timer: Timer = $RespawnTimer
+@onready var game_plan_timer: Timer = $GamePlanTimer
 
 @onready var starting_x = position.x
 const RESPAWN_Y = -264.0
@@ -13,6 +14,8 @@ const RESPAWN_TIME = 0.25
 @onready var stuck_box_collider:CollisionShape2D = $StuckBox/CollisionShape2D
 @onready var hurt_box_collider:CollisionShape2D = $HurtBox/CollisionShape2D
 
+const GOLD_SCENE = preload("res://Items/Gold/gold.tscn")
+
 var dropX: Variant = null
 var climbYGlobal: Variant = null
 var climbY: Variant = null:
@@ -20,7 +23,7 @@ var climbY: Variant = null:
 		if value != climbY:
 			climbY = value
 
-		if value:
+		if value != null:
 			climbYGlobal = map.get_cell_center_global(Vector2i(0, value)).y
 		else:
 			climbYGlobal = null
@@ -40,7 +43,7 @@ var next_dest: Variant = null:
 			
 
 func game_plan() -> void:
-	if !target:
+	if !target or target.state == RunnerState.DEAD:
 		return
 
 	var area = my_area()
@@ -54,11 +57,14 @@ func game_plan() -> void:
 		else:
 			print("Something is wrong!")
 			print(my_path, " from ", area, " to ", target_area)
+			game_plan_timer.start(.25)
 	else:
-		#if not area:
+		if not area:
 			#print("no enemy area", area)
+			game_plan_timer.start(.25)
 		if not target_area:
-			print("no hero area", target_area)
+			#print("no hero area", target_area)
+			game_plan_timer.start(.25)
 
 
 var state: RunnerState = RunnerState.GROUND:
@@ -93,15 +99,17 @@ var state: RunnerState = RunnerState.GROUND:
 			await sprite.animation_finished
 			respawn_timer.start(RESPAWN_TIME)
 		elif value == RunnerState.STUCK:
-			#stuck_box_collider.set_deferred('disabled', false)
+			stuck_box_collider.set_deferred('disabled', false)
 			#hurt_box_collider.set_deferred('disabled', true)
 			sprite.play("fall")
 			recover_timer.start(RECOVER_TIME)
 		elif value == RunnerState.RECOVERING:
-			#stuck_box_collider.set_deferred('disabled', true)
 			#hurt_box_collider.set_deferred('disabled', false)
 			sprite.play("climb")
 			climb_out()
+
+		if value != RunnerState.STUCK:
+			stuck_box_collider.set_deferred('disabled', true)
 
 const CLIMBOUT_DURATION:float = .75
 var falling := false
@@ -130,8 +138,9 @@ func hero_area_changed(hero_area: Variant) -> void:
 	set(value):
 		if value != has_gold:
 			has_gold = value
-		
-		gold_indicator.visible = value
+	
+		if gold_indicator:	
+			gold_indicator.visible = value
 
 func get_ground_direction_x() -> float:
 	if !next_dest:
@@ -168,13 +177,14 @@ func get_ground_direction_x() -> float:
 		var endX = next_dest.endX
 		var startX = next_dest.startX
 
-		if next_dest.startX > platform.startX:
+		if next_dest.startX < platform.startX:
 			startX = platform.startX - 1
-		if next_dest.endX < platform.endX:
+		if next_dest.endX > platform.endX:
 			endX = platform.endX + 1
 
+		#print(next_dest)
 		#print(endX, ", ", startX, ", ", coords.x)
-
+#
 		if startX < coords.x:
 			direction = -1.0
 		elif endX > coords.x:
@@ -380,6 +390,7 @@ func get_climbing_direction_x(coords: Vector2i, ladder: Variant) -> float:
 	return direction
 
 func get_climbing_direction_y(coords: Vector2i, ladder: Variant) -> float:
+	#print(1)
 	if !next_dest:
 		return 0.0
 	
@@ -391,7 +402,6 @@ func get_climbing_direction_y(coords: Vector2i, ladder: Variant) -> float:
 	if !ladder:
 		return 0.0
 		
-	
 	if next_dest.type == 'platform' and next_dest.y <= coords.y:
 		climbY = next_dest.y - 5
 	elif next_dest.type == 'platform' and next_dest.y > coords.y + 2:
@@ -407,6 +417,7 @@ func get_climbing_direction_y(coords: Vector2i, ladder: Variant) -> float:
 	#print("next dest", next_dest)
 	#print("coords", coords)
 	#print("climbY", climbY)
+	#print("climbY global", climbYGlobal)
 
 	if climbY == null or climbYGlobal == null:
 		return 0.0
@@ -426,7 +437,7 @@ func get_climbing_direction_y(coords: Vector2i, ladder: Variant) -> float:
 
 func _climbing_process() -> void:
 	velocity.y = 0
-	
+
 	if climbY != null:
 		top_of_ladder = false
 
@@ -446,7 +457,7 @@ func _climbing_process() -> void:
 
 	if !ladder or ladder.type != 'ladder':
 		return
-		
+
 	var vert := get_climbing_direction_y(coords, ladder)
 
 	if vert:
@@ -540,6 +551,12 @@ func _on_climb_zone_area_entered(area: Area2D) -> void:
 func _on_foot_area_entered(area: Area2D) -> void:
 	if area.name == 'Caught':
 		state = RunnerState.STUCK
+		if has_gold:
+			var gold_instance = GOLD_SCENE.instantiate()
+			gold_instance.global_position = Vector2(global_position.x, global_position.y - 16)
+			var root_node = get_tree().root.get_child(0)
+			root_node.call_deferred("add_child", gold_instance)
+			has_gold = false
 
 func _on_recover_timer_timeout() -> void:
 	if state == RunnerState.STUCK:
@@ -554,9 +571,17 @@ func _on_hurt_box_body_entered(body: Node2D) -> void:
 	if hurt_box_collider.disabled:
 		return
 
-	if body is Hero:
+	if body is Hero and state != RunnerState.STUCK:
 		var hero = body as Hero
-		hero.die()
+		
+		if hero.state != RunnerState.FLUNG:
+			hero.die()
 
 func _ready() -> void:
+	if has_gold and gold_indicator:
+		gold_indicator.visible = true
 	target.connect('hero_area_change', hero_area_changed)
+
+
+func _on_game_plan_timer_timeout() -> void:
+	game_plan()

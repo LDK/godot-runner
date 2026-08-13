@@ -1,21 +1,40 @@
 extends Runner
 class_name Hero
 
-var zapping := false
+var zapping := false:
+	set(value):
+		if value != zapping:
+			zapping = value
+		
+			hero_zapping.emit(value)
+
 @onready var zap_left:RayCast2D = $ZapLeft
 @onready var zap_right:RayCast2D = $ZapRight
 @onready var zap_check_left:RayCast2D = $ZapCheckLeft
 @onready var zap_check_right:RayCast2D = $ZapCheckRight
 
+var anchor_local_offset := Vector2.ZERO
+
+# This will either be a Node2D or null
+var anchor: Variant:
+	set(value):
+		if value != anchor:
+			anchor = value
+			anchor_local_offset = value.to_local(global_position) if value else Vector2.ZERO
+		if value:	
+			print("anchored to: ", value)
+
 signal hero_area_change(area: Variant)
+signal hero_zapping(is_zapping: bool)
+signal gold_collected()
 
 var current_area: Variant = null:
 	set(value):
 		if value != current_area:
 			current_area = value
 
-			if !value:
-				print("hero emitting null area", value)
+			#if !value:
+				#print("hero emitting null area", value)
 
 			hero_area_change.emit(value)		
 
@@ -41,6 +60,11 @@ var state: RunnerState = RunnerState.GROUND:
 			collision_box.set_deferred("disabled", true)
 			sprite.play("die")
 			lives -= 1
+		elif value == RunnerState.FLUNG:
+			sprite.play("fall")
+
+		if value != RunnerState.GROUND:
+			zapping = false
 
 var falling := false
 
@@ -71,16 +95,18 @@ func get_direction_x() -> float:
 	var direction := Input.get_axis("ui_left", "ui_right")
 	return direction
 
-func check_brick_zap(zap: RayCast2D) -> Brick:
+func check_brick_zap(zap: RayCast2D) -> Dissolvable:
 	if !zap.is_colliding():
 		return null
 
 	var object = zap.get_collider()
+	print("object: ", object)
+
 
 	if !object is BrickBody:
 		return null
 
-	return object.brick as Brick
+	return object.brick as Dissolvable
 
 func check_for_zap_block(zap: RayCast2D, zap_check: RayCast2D) -> bool:
 	var blocked := false
@@ -105,9 +131,16 @@ func _ground_process() -> void:
 		velocity = Vector2.ZERO
 		if sprite.animation != 'zap':
 			sprite.play("zap")
+	
+	if anchor:
+		global_position = anchor.to_global(anchor_local_offset)
+		print("anchor local offset: ", anchor_local_offset)
+		print("global position: ", global_position, anchor.to_global(anchor_local_offset))
+
+	if anchor or zapping:
 		return
 
-	var target_brick: Brick
+	var target_brick: Dissolvable
 
 	if Input.is_action_just_pressed("zap_left"):
 		var blocked = check_for_zap_block(zap_left, zap_check_left)
@@ -218,7 +251,12 @@ func _hanging_process() -> void:
 
 	if is_on_floor():
 		state = RunnerState.GROUND
-	
+
+func _flung_process() -> void:
+	if global_position.y <= -80.0:
+		collision_box.disabled = false
+		state = RunnerState.FALLING
+
 func _physics_process(delta: float) -> void:
 	if state == RunnerState.DEAD:
 		return
@@ -233,6 +271,8 @@ func _physics_process(delta: float) -> void:
 		_climbing_process()
 	elif state == RunnerState.HANGING:
 		_hanging_process()
+	elif state == RunnerState.FLUNG:
+		_flung_process()
 
 	if top_of_ladder and velocity.y < 0:
 		velocity.y = 0
