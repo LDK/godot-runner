@@ -21,8 +21,8 @@ var anchor: Variant:
 		if value != anchor:
 			anchor = value
 			anchor_local_offset = value.to_local(global_position) if value else Vector2.ZERO
-		if value:	
-			print("anchored to: ", value)
+		#if value:	
+			#print("anchored to: ", value)
 
 signal hero_area_change(area: Variant)
 signal hero_zapping(is_zapping: bool)
@@ -31,10 +31,35 @@ signal gold_collected()
 var current_area: Variant = null:
 	set(value):
 		if value != current_area:
-			current_area = value
+			if value:
+				current_area = value
+			else:
+				var coords = my_coords()
+				if state == RunnerState.CLIMBING:
+					var ladderLeft: Variant = map.ladder_at(Vector2i(coords.x - 1, coords.y))
+					var ladderRight: Variant = map.ladder_at(Vector2i(coords.x + 1, coords.y))
 
-			#if !value:
-				#print("hero emitting null area", value)
+					print("ladderLeft", ladderLeft)
+					print("ladderRight", ladderRight)
+
+					if ladderLeft and not ladderRight:
+						current_area = ladderLeft
+						print("current area is now ", current_area, value)
+					elif ladderRight and not ladderLeft:
+						current_area = ladderRight
+					elif not (ladderLeft or ladderRight):
+						print("This should never happen if I'm in a null area!!")
+						state = RunnerState.FALLING
+					else:
+						var distanceLeft = abs(global_position.x - map.get_cell_center_global(Vector2i(ladderLeft.x, 0)).x)
+						var distanceRight = abs(global_position.x - map.get_cell_center_global(Vector2i(ladderRight.x, 0)).x)
+						if distanceLeft < distanceRight:
+							current_area = ladderLeft
+						else:
+							current_area = ladderRight
+
+			if !current_area:
+				print("hero emitting null area ", stateNames[state], my_coords())
 
 			hero_area_change.emit(value)		
 
@@ -100,7 +125,7 @@ func check_brick_zap(zap: RayCast2D) -> Dissolvable:
 		return null
 
 	var object = zap.get_collider()
-	print("object: ", object)
+	#print("object: ", object)
 
 
 	if !object is BrickBody:
@@ -134,8 +159,8 @@ func _ground_process() -> void:
 	
 	if anchor:
 		global_position = anchor.to_global(anchor_local_offset)
-		print("anchor local offset: ", anchor_local_offset)
-		print("global position: ", global_position, anchor.to_global(anchor_local_offset))
+		#print("anchor local offset: ", anchor_local_offset)
+		#print("global position: ", global_position, anchor.to_global(anchor_local_offset))
 
 	if anchor or zapping:
 		return
@@ -180,7 +205,9 @@ func _ground_process() -> void:
 			if not (top_of_ladder and (vert < 0.0 or velocity.x != 0)):
 				if not (bottom_of_ladder and vert > 0.0):
 					state = RunnerState.CLIMBING
+					print("xcorrect1")
 					global_position.x = ladders_touched[0].global_position.x
+					print("corrected via: ", ladders_touched[0])
 
 	## TRANSITION TO FALLING ##
 	elif !is_on_floor():
@@ -214,6 +241,7 @@ func _climbing_process() -> void:
 			state = RunnerState.GROUND
 		elif velocity.y > 0.0 and bottom_of_ladder:
 			state = RunnerState.GROUND
+		print("xcorrect2")
 		global_position.x = ladders_touched[0].global_position.x
 	
 	var direction := get_direction_x()

@@ -786,9 +786,9 @@ func _ready() -> void:
 
 	find_landing_spots()
 
-	print("ENTITIES:")
-	for entity in entities:
-		print(entities[entity])
+	#print("ENTITIES:")
+	#for entity in entities:
+		#print(entities[entity])
 
 	#print("landing spots", level_drops)
 

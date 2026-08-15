@@ -31,7 +31,7 @@ func _ready() -> void:
 	gold_count = 0
 
 	for child in root_children:
-		print("Child name: ", child.name)
+		#print("Child name: ", child.name)
 		if child.name == 'Golds':
 			var golds = child.get_children()
 			gold_count += golds.size()

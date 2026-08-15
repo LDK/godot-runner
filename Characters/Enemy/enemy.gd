@@ -35,8 +35,8 @@ var next_dest: Variant = null:
 		else:
 			return
 
-		if value:
-			print("I should head to: ", value.type, value.entity_id, " from: ", my_area())
+		#if value:
+			#print("I should head to: ", value.type, value.entity_id, " from: ", my_area())
 			#print(value)
 			#print("from:")
 			#print(my_area())
@@ -55,8 +55,8 @@ func game_plan() -> void:
 		if my_path.size() > 1:
 			next_dest = map.entities[my_path[1]].def
 		else:
-			print("Something is wrong!")
-			print(my_path, " from ", area, " to ", target_area)
+			#print("Something is wrong!")
+			#print(my_path, " from ", area, " to ", target_area)
 			game_plan_timer.start(.25)
 	else:
 		if not area:
@@ -152,7 +152,7 @@ func get_ground_direction_x() -> float:
 	var hero_area = target.my_area()
 
 	if !platform:
-		print("I AM NOWHERE")
+		#print("I AM NOWHERE")
 		state = RunnerState.FALLING
 		return 0.0
 
@@ -261,7 +261,7 @@ func get_hanging_direction_x() -> float:
 
 	if bar.type != 'bar':
 		if state == RunnerState.HANGING:
-			print("fall2")
+			#print("fall2")
 			state = RunnerState.FALLING
 
 	var drop_found := false
@@ -328,7 +328,7 @@ func _ground_process() -> void:
 
 	## TRANSITION TO FALLING ##
 	if !is_on_floor() and !on_ladder and !on_bar:
-		print("fall4")
+		#print("fall4")
 		state = RunnerState.FALLING
 
 func _falling_process(delta: float) -> void:
@@ -352,7 +352,7 @@ func get_climbing_direction_x(coords: Vector2i, ladder: Variant) -> float:
 	var direction: float = 0.0
 
 	if next_dest.type == 'platform':
-		print("next dest", next_dest)
+		#print("next dest", next_dest)
 		if next_dest.startX <= ladder.x and ladder.x <= next_dest.endX:
 			# If the x coordinate of the ladder falls within the platform's range,
 			# that means we can just climb down and don't need to jump off.
@@ -366,8 +366,8 @@ func get_climbing_direction_x(coords: Vector2i, ladder: Variant) -> float:
 
 					if distance < .8:
 						direction = -1.0
-					else:
-						print("distance", distance)
+					#else:
+						#print("distance", distance)
 
 			elif map.level_drops.has(Vector2i(coords.x + 1, coords.y)):
 				if map.level_drops[Vector2i(coords.x + 1, coords.y)].entity_id == next_dest.entity_id:
@@ -375,8 +375,8 @@ func get_climbing_direction_x(coords: Vector2i, ladder: Variant) -> float:
 
 					if distance < .8:
 						direction = 1.0
-					else:
-						print("distance", distance)
+					#else:
+						#print("distance", distance)
 
 	elif next_dest.type == 'bar':
 		if next_dest.y == coords.y:
@@ -388,8 +388,8 @@ func get_climbing_direction_x(coords: Vector2i, ladder: Variant) -> float:
 		if direction:
 			if (map.platform_at(Vector2i(coords.x + int(direction), coords.y))):
 				direction = 0
-			else:
-				print("moving ", direction, " at ", coords.y)
+			#else:
+				#print("moving ", direction, " at ", coords.y)
 
 	return direction
 
