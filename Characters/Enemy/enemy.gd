@@ -346,14 +346,18 @@ func _falling_process(delta: float) -> void:
 		state = RunnerState.GROUND
 
 func get_climbing_direction_x(coords: Vector2i, ladder: Variant) -> float:
-	if !next_dest or !ladder:
+	if !next_dest or !ladder or ladder.type != 'ladder':
 		return 0.0
 
 	var direction: float = 0.0
 
 	if next_dest.type == 'platform':
-		
-		if next_dest.y > coords.y:
+		print("next dest", next_dest)
+		if next_dest.startX <= ladder.x and ladder.x <= next_dest.endX:
+			# If the x coordinate of the ladder falls within the platform's range,
+			# that means we can just climb down and don't need to jump off.
+			pass
+		elif next_dest.y > coords.y:
 			if next_dest.y == coords.y - 1:
 				direction = -1 if next_dest.startX < coords.x else 1
 			elif map.level_drops.has(Vector2i(coords.x - 1, coords.y)):
