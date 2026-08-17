@@ -205,9 +205,7 @@ func _ground_process() -> void:
 			if not (top_of_ladder and (vert < 0.0 or velocity.x != 0)):
 				if not (bottom_of_ladder and vert > 0.0):
 					state = RunnerState.CLIMBING
-					print("xcorrect1")
 					global_position.x = ladders_touched[0].global_position.x
-					print("corrected via: ", ladders_touched[0])
 
 	## TRANSITION TO FALLING ##
 	elif !is_on_floor():
@@ -241,7 +239,6 @@ func _climbing_process() -> void:
 			state = RunnerState.GROUND
 		elif velocity.y > 0.0 and bottom_of_ladder:
 			state = RunnerState.GROUND
-		print("xcorrect2")
 		global_position.x = ladders_touched[0].global_position.x
 	
 	var direction := get_direction_x()

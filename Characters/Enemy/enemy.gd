@@ -28,6 +28,8 @@ var climbY: Variant = null:
 		else:
 			climbYGlobal = null
 
+var dest_after_next: Variant = null
+
 var next_dest: Variant = null:
 	set(value):
 		if value != next_dest:
@@ -35,12 +37,55 @@ var next_dest: Variant = null:
 		else:
 			return
 
-		#if value:
-			#print("I should head to: ", value.type, value.entity_id, " from: ", my_area())
-			#print(value)
-			#print("from:")
-			#print(my_area())
-			
+		if value:
+			var current_area = my_area()
+			#print("I should head to: ", value.type, value.entity_id, " from: ", current_area.entity_id)
+	
+			if dest_after_next:
+				#print("To get to: ", dest_after_next.entity_id)
+				var exits:Array = []
+				exits.append_array(current_area.ladders)
+				exits.append_array(current_area.bars)
+				exits.append_array(current_area.platforms)
+
+				var choices: Array = []
+
+				for exit in exits:
+					var entity = map.entities[exit].def if map.entities.has(exit) else null
+
+					if !entity:
+						return
+
+					if dest_after_next.type == 'ladder':
+						if entity.has('ladders') and dest_after_next.entity_id in entity.ladders:
+							choices.push_back(entity)
+					elif dest_after_next.type == 'platform':
+						if entity.has('platforms') and dest_after_next.entity_id in entity.platforms:					
+							choices.push_back(entity)
+					elif dest_after_next.type == 'bar':
+						if entity.has('bars') and dest_after_next.entity_id in entity.bars:
+							choices.push_back(entity)
+					
+				if choices.size() > 1:
+					print("Choices choices! (from ", current_area.entity_id, " at ", my_coords(), ")")
+					var closest: Dictionary
+					var closest_distance: float = 9999.9
+					for choice in choices:
+						var dist: int = 0
+									
+						dist = dist_x(choice)
+
+						if dist < closest_distance:
+							closest_distance = dist
+							closest = choice
+					
+					#print("Closest choice: ", closest)
+					if closest.entity_id == value.entity_id:
+						#print("Original path was already the closest.")
+						pass
+					else:
+						#print("Path should be revised!")
+						next_dest = closest
 
 func game_plan() -> void:
 	if !target or target.state == RunnerState.DEAD:
@@ -53,6 +98,10 @@ func game_plan() -> void:
 		var my_path = map.find_shortest_path(area.entity_id, target_area.entity_id)
 
 		if my_path.size() > 1:
+			if my_path.size() > 2:
+				dest_after_next = map.entities[my_path[2]].def if map.entities.has(my_path[2]) else null
+			else:
+				dest_after_next = null
 			next_dest = map.entities[my_path[1]].def
 		else:
 			#print("Something is wrong!")
@@ -65,7 +114,6 @@ func game_plan() -> void:
 		if not target_area:
 			#print("no hero area", target_area)
 			game_plan_timer.start(.25)
-
 
 var state: RunnerState = RunnerState.GROUND:
 	set(value):
@@ -142,8 +190,35 @@ func hero_area_changed(hero_area: Variant) -> void:
 		if gold_indicator:	
 			gold_indicator.visible = value
 
-func get_ground_direction_x() -> float:
-	if !next_dest:
+func dist_x(dest: Dictionary) -> int:
+	var coords = my_coords()
+	var area = my_area()
+
+	var x = -1
+	
+	if dest.type == 'ladder':
+		x = dest.x
+	
+	elif dest.type == 'bar':
+		if dropX:
+			x = dropX
+
+		elif area.type == 'platform':
+			var direction = get_ground_direction_x(dest)
+			if direction == -1.0:
+				x = area.startX - 1
+			elif direction == 1.0:
+				x = area.startX + 1
+			else:
+				# This probably shouldn't happen.
+				x = coords.x
+		#elif area.type == 'bar':
+			
+
+	return abs(coords.x - x)
+
+func get_ground_direction_x(dest: Variant) -> float:
+	if !dest:
 		return 0.0
 
 	var direction: float
@@ -172,17 +247,17 @@ func get_ground_direction_x() -> float:
 		elif coords.x < hero_coords.x:
 			direction = 1.0
 
-	elif next_dest.type in ['bar']:
+	elif dest.type in ['bar']:
 		#print("hi")
-		var endX = next_dest.endX
-		var startX = next_dest.startX
+		var endX = dest.endX
+		var startX = dest.startX
 
-		if next_dest.startX < platform.startX:
+		if dest.startX < platform.startX:
 			startX = platform.startX - 1
-		if next_dest.endX > platform.endX:
+		if dest.endX > platform.endX:
 			endX = platform.endX + 1
 
-		#print(next_dest)
+		#print(dest)
 		#print(endX, ", ", startX, ", ", coords.x)
 #
 		if startX < coords.x:
@@ -192,7 +267,7 @@ func get_ground_direction_x() -> float:
 		
 		#print("direction", direction)
 
-	elif next_dest.type in ['platform']:
+	elif dest.type in ['platform']:
 		# Check both edges of the current platform for which will drop you on the proper target platform
 		var leftCoords = Vector2i(platform.startX - 1, platform.y)
 		var rightCoords = Vector2i(platform.endX + 1, platform.y)
@@ -203,7 +278,7 @@ func get_ground_direction_x() -> float:
 		#print("platform?", map.platform_at(Vector2i(5,3)))
 		
 		# If the left side is valid
-		if dropLeft and dropLeft.entity_id == next_dest.entity_id:
+		if dropLeft and dropLeft.entity_id == dest.entity_id:
 			# If the right side is also valid...
 			if dropRight and dropRight.entity_id == dropLeft.entity_id:
 				# Go to whichever is closer
@@ -219,24 +294,46 @@ func get_ground_direction_x() -> float:
 				direction = -1.0
 		else:
 			# If not, try the right side.
-			if dropRight and dropRight.entity_id == next_dest.entity_id:
+			if dropRight and dropRight.entity_id == dest.entity_id:
 				direction = 1.0
 
-	elif next_dest.type == 'ladder':
-		if next_dest.x < coords.x:
+	elif dest.type == 'ladder':
+		if dest.x < coords.x:
 			direction = -1.0
-		elif next_dest.x > coords.x:
+		elif dest.x > coords.x:
 			direction = 1.0
-		elif next_dest.x == coords.x and ladders_touched.size():
+		elif dest.x == coords.x and ladders_touched.size():
 			state = RunnerState.CLIMBING
 			global_position.x = ladders_touched[0].global_position.x
-		elif next_dest.x == coords.x:
+		elif dest.x == coords.x:
 			global_position.x = map.map_to_local(coords).x
 
 	return direction
 
-func get_hanging_direction_x() -> float:
-	if !next_dest and dropX == null:
+func get_drop_x(bar: Dictionary, dest: Dictionary) -> int:
+	var candidates: Array[int] = []
+	var dx: int
+
+	for x in bar.drops:
+		if bar.drops[x] == dest.entity_id:
+			candidates.push_back(x)
+
+	candidates.sort()
+
+	var hero_coords = target.my_coords()
+
+	if bar.drops.has(hero_coords.x) and dest.entity_id == bar.drops[hero_coords.x]:
+		dx = hero_coords.x
+	elif candidates.size() && hero_coords.x < candidates[0]:
+		dx = candidates[0]
+	elif candidates.size() && hero_coords.x > candidates[candidates.size() - 1]:
+		dx = candidates[candidates.size() - 1]
+	
+	return dx
+
+
+func get_hanging_direction_x(dest: Variant) -> float:
+	if !dest and dropX == null:
 		return 0.0
 
 	var hero_area = target.my_area()
@@ -244,19 +341,17 @@ func get_hanging_direction_x() -> float:
 	var direction: float = 0.0
 	var coords = my_coords()
 
-	var candidates: Array[int] = []
-
 	var bar = my_area()
 
 	if !bar or !bar.has('drops') or !bar.drops.size():
-		if next_dest.type == 'bar':
-			bar = next_dest
+		if dest.type == 'bar':
+			bar = dest
 			game_plan()
 		else:
 			state = RunnerState.FALLING
 			return 0.0
 
-	if next_dest.entity_id == bar.entity_id and hero_area and next_dest.entity_id != hero_area.entity_id:
+	if dest.entity_id == bar.entity_id and hero_area and dest.entity_id != hero_area.entity_id:
 		game_plan()
 
 	if bar.type != 'bar':
@@ -264,16 +359,9 @@ func get_hanging_direction_x() -> float:
 			#print("fall2")
 			state = RunnerState.FALLING
 
-	var drop_found := false
+	var on_hero_platform: bool = dest.entity_id == bar.entity_id and bar.type == 'bar'
 
 	if bar.has('drops'):
-		for x in bar.drops:
-			if bar.drops[x] == next_dest.entity_id:
-				drop_found = true
-				candidates.push_back(x)
-
-		candidates.sort()
-
 		var dest_x = dropX if dropX else coords.x
 		
 		if dest_x < coords.x:
@@ -281,29 +369,22 @@ func get_hanging_direction_x() -> float:
 		elif dest_x > coords.x:
 			direction = 1.0
 
-		if target:
-			if next_dest.entity_id == bar.entity_id and bar.type == 'bar':
-				direction = 1.0 if target.my_coords().x > coords.x else -1.0
-			else:
-				var hero_coords = target.my_coords()
-				if bar.drops.has(hero_coords.x) and next_dest.entity_id == bar.drops[hero_coords.x]:
-					dropX = hero_coords.x
-				elif candidates.size() && hero_coords.x < candidates[0]:
-					dropX = candidates[0]
-				elif candidates.size() && hero_coords.x > candidates[candidates.size() - 1]:
-					dropX = candidates[candidates.size() - 1]
+		if target and on_hero_platform:
+			direction = 1.0 if target.my_coords().x > coords.x else -1.0
+		elif target:
+			dropX = get_drop_x(bar, dest)
 
-	if !drop_found:
-		if next_dest.type == 'platform':
-			direction = 1.0 if next_dest.startX > coords.x else -1.0
-		elif next_dest.type == 'ladder':
-			direction = 1.0 if next_dest.x > coords.x else -1.0
+	if !dropX:
+		if dest.type == 'platform':
+			direction = 1.0 if dest.startX > coords.x else -1.0
+		elif dest.type == 'ladder':
+			direction = 1.0 if dest.x > coords.x else -1.0
 
 	return direction
 
 func _ground_process() -> void:
 	## MOVEMENT ##
-	var direction := get_ground_direction_x()
+	var direction := get_ground_direction_x(next_dest)
 
 	if direction:
 		velocity.x = direction * walk_speed
@@ -507,7 +588,7 @@ func _hanging_process() -> void:
 			on_bar = false
 			return
 	
-	var direction := get_hanging_direction_x()
+	var direction := get_hanging_direction_x(next_dest)
 
 	if direction:
 		velocity.x = direction * walk_speed

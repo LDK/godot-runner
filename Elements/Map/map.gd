@@ -7,6 +7,8 @@ var tile_types := ['Empty', 'Brick', 'Block', 'Ladder', 'Bar', 'GoldLadder']
 
 var entities: Dictionary = {}
 
+signal player_wins()
+
 func highest_value_on_plane(plane: String, cells: Array[Vector2i]) -> int:
 	var highest: int = -9999
 
@@ -885,6 +887,8 @@ func add_ladder_zones(ladder: Dictionary) -> void:
 
 	add_child(top_instance)
 	add_child(bottom_instance)
+	
+	top_instance.connect('player_wins', on_player_wins)
 
 const BAR_END_SCENE = preload("res://Elements/Bar/bar_end.tscn")
 
@@ -925,3 +929,5 @@ func find_landing_spots() -> void:
 
 		x += 1
 		
+func on_player_wins() -> void:
+	player_wins.emit()

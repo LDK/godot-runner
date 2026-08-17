@@ -5,6 +5,7 @@ class_name Level
 @export var hero: Hero
 @export var level_number: int = 0
 @export var map: LevelMap
+@onready var circle_wipe:CircleWipe = $CircleWipe
 
 var gold_count: int = 0:
 	set(value):
@@ -25,6 +26,9 @@ func _ready() -> void:
 	if hero is Hero:
 		hud.hero = hero
 		hero.connect("gold_collected", _on_hero_gold_collected)
+
+	if map is LevelMap:
+		map.connect("player_wins", _on_player_wins)
 
 	var root_children := get_tree().root.get_child(0).get_children()
 
@@ -48,3 +52,6 @@ func _process(_delta: float) -> void:
 
 func _on_hero_gold_collected() -> void:
 	gold_collected = gold_collected + 1
+
+func _on_player_wins() -> void:
+	circle_wipe.close()
