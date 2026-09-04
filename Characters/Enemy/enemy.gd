@@ -14,6 +14,8 @@ const RESPAWN_TIME = 0.25
 @onready var stuck_box_collider:CollisionShape2D = $StuckBox/CollisionShape2D
 @onready var hurt_box_collider:CollisionShape2D = $HurtBox/CollisionShape2D
 
+var target: Hero
+
 const GOLD_SCENE = preload("res://Items/Gold/gold.tscn")
 
 var dropX: Variant = null
@@ -174,8 +176,6 @@ func climb_out() -> void:
 	var tween := create_tween()
 	tween.tween_property(self, 'position:y', position.y - 16, CLIMBOUT_DURATION)
 	tween.tween_callback(climb_over)
-
-@onready var target: Hero = level.hero
 
 func hero_area_changed(hero_area: Variant) -> void:
 	if hero_area:
@@ -702,9 +702,15 @@ func _on_hurt_box_body_entered(body: Node2D) -> void:
 			hero.die()
 
 func _ready() -> void:
+	await super()
+	
+	target = level.get_node("Hero")
+
 	if has_gold and gold_indicator:
 		gold_indicator.visible = true
-	target.connect('hero_area_change', hero_area_changed)
+
+	if target:
+		target.connect('hero_area_change', hero_area_changed)
 
 
 func _on_game_plan_timer_timeout() -> void:

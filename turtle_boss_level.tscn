@@ -4,7 +4,7 @@
 [ext_resource type="TileSet" uid="uid://d33t0klsjh0l8" path="res://Assets/tileset.tres" id="2_j5a51"]
 [ext_resource type="Script" uid="uid://davi5rtkmi7pl" path="res://Elements/Map/map.gd" id="3_xvgi4"]
 [ext_resource type="Script" uid="uid://c7ixpifllympg" path="res://turtle_boss.gd" id="4_j5a51"]
-[ext_resource type="PackedScene" uid="uid://q87xtt5lvavt" path="res://Elements/Level Constants/level_constants.tscn" id="4_ybbha"]
+[ext_resource type="PackedScene" uid="uid://q87xtt5lvavt" path="res://Screen Elements/screen_elements.tscn" id="4_ybbha"]
 [ext_resource type="Texture2D" uid="uid://bdruf5pr7uktm" path="res://Assets/taka.png" id="5_jspis"]
 [ext_resource type="PackedScene" uid="uid://cgavv5lbnc0ai" path="res://Characters/Hero/hero.tscn" id="6_fdfgp"]
 [ext_resource type="PackedScene" uid="uid://edt64uft6c8s" path="res://Elements/TurtleLeg/turtle_leg.tscn" id="7_vrv0m"]

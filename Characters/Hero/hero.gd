@@ -58,9 +58,6 @@ var current_area: Variant = null:
 						else:
 							current_area = ladderRight
 
-			if !current_area:
-				print("hero emitting null area ", stateNames[state], my_coords())
-
 			hero_area_change.emit(value)		
 
 var state: RunnerState = RunnerState.GROUND:
@@ -107,6 +104,7 @@ func die() -> void:
 	state = RunnerState.DEAD
 
 func _ready() -> void:
+	super()
 	sprite.animation_finished.connect(_animation_finished)
 
 func _animation_finished() -> void:
@@ -283,6 +281,9 @@ func _flung_process() -> void:
 		state = RunnerState.FALLING
 
 func _physics_process(delta: float) -> void:
+	if not (map and level):
+		return
+
 	if state == RunnerState.DEAD:
 		return
 	elif state == RunnerState.GROUND:
@@ -311,3 +312,6 @@ func _physics_process(delta: float) -> void:
 func _on_climb_zone_area_entered(area: Area2D) -> void:
 	if area is Bar:
 		state = RunnerState.HANGING
+
+func on_collect_gold() -> void:
+	gold_collected.emit()

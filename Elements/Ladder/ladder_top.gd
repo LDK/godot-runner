@@ -15,6 +15,7 @@ func _on_area_entered(area: Area2D) -> void:
 		runner.top_of_ladder = true
 	
 		if golden:
+			print("GOLDEN")
 			win_sound.play(0.0)
 			player_wins.emit()
 			get_tree().paused = true
