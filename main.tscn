@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://bpig1ix8n1xsr"]
+
+[ext_resource type="Script" uid="uid://d3drj4cafh6y6" path="res://game_container.gd" id="1_h2yge"]
+[ext_resource type="PackedScene" uid="uid://bptg3b1exvnok" path="res://Levels/level1.tscn" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://q87xtt5lvavt" path="res://Screen Elements/screen_elements.tscn" id="2_0xm2m"]
+[ext_resource type="Script" uid="uid://bvywrk7fxrh7j" path="res://level_container.gd" id="3_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://caa1j61sy232w" path="res://Elements/HUD/hud.tscn" id="5_lquwl"]
+
+[node name="Main" type="Node2D" unique_id=599648871]
+process_mode = 3
+script = ExtResource("1_h2yge")
+starting_scene = ExtResource("1_ig7tw")
+
+[node name="ScreenElements" parent="." unique_id=937608272 instance=ExtResource("2_0xm2m")]
+
+[node name="LevelContainer" type="Node2D" parent="." unique_id=5164573]
+process_mode = 1
+script = ExtResource("3_1bvp3")
+
+[node name="HUD" parent="." unique_id=1505405376 instance=ExtResource("5_lquwl")]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=2072136142]
+position = Vector2(224, -18)
+zoom = Vector2(2, 2)

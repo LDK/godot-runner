@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Lode Runner"
-run/main_scene="uid://bptg3b1exvnok"
+run/main_scene="uid://bpig1ix8n1xsr"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 

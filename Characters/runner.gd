@@ -10,10 +10,31 @@ var stateNames:Array[String] = ['Ground', 'Hanging', 'Falling', 'Climbing', 'Stu
 @export var walk_speed: float = 125.0
 @export var climb_speed: float = 110.0
 
-@onready var level: Level = get_tree().current_scene.get_node_or_null("Level Constants")
-@onready var map: LevelMap = level.map
+var level: Level:
+	set(value):
+		if value != level:
+			level = value
+			if level.map:
+				map = level.map
+
+var map: LevelMap
+
+func _ready() -> void:
+	await get_parent().ready
+	print("runner _ready")
+	if self is Hero:
+		level = get_parent() as Level
+	elif self is Enemy:
+		level = get_parent().get_parent() as Level
+	print("level: ", level)
+	if level and level is Level:
+		print("map: ", level.map)
+		print("I am a", ' Hero' if self is Hero else 'n Enemy', '.')
+		map = level.map
+	pass
 
 func my_coords() -> Vector2i:
+	#print("my coords called")
 	var local_pos = map.to_local(global_position)
 	var cell_coords = map.local_to_map(local_pos)
 	

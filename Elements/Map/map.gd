@@ -934,11 +934,13 @@ func add_ladder_zones(ladder: Dictionary) -> void:
 	top_instance.position = Vector2(xGlobal, startYGlobal.y - 15)
 	bottom_instance.position = Vector2(xGlobal, endYGlobal.y + 3)
 
-	add_child(top_instance)
-	add_child(bottom_instance)
+	call_deferred("add_child", top_instance)
+	call_deferred("add_child", bottom_instance)
 
 	if golden:
+		await top_instance.ready
 		top_instance.collision_box.disabled = true
+		await bottom_instance.ready
 		bottom_instance.collision_box.disabled = true
 	
 	top_instance.connect('player_wins', on_player_wins)
@@ -956,8 +958,8 @@ func add_bar_zones(bar: Dictionary) -> void:
 	left_instance.position = Vector2(startXGlobal.x - 17, YGlobal)
 	right_instance.position = Vector2(endXGlobal.x + 17, YGlobal)
 
-	add_child(left_instance)
-	add_child(right_instance)
+	call_deferred("add_child", left_instance)
+	call_deferred("add_child", right_instance)
 
 func find_landing_spots() -> void:
 	var x = top_left.x

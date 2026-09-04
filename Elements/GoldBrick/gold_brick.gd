@@ -36,6 +36,3 @@ func zap() -> void:
 		return
 
 	state = BrickState.DISSOLVING
-
-func _on_kill_zone_body_entered(bdy: Node2D) -> void:
-	pass
