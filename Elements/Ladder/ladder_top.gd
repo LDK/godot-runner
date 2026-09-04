@@ -3,7 +3,10 @@ class_name LadderTop
 @onready var win_sound: AudioStreamPlayer = $WinSound
 
 var golden := false
+var hide_on_gold := false
 signal player_wins()
+
+@onready var collision_box:CollisionShape2D = $CollisionShape2D
 
 func _on_area_entered(area: Area2D) -> void:
 	if area is RunnerFoot:
@@ -12,7 +15,6 @@ func _on_area_entered(area: Area2D) -> void:
 		runner.top_of_ladder = true
 	
 		if golden:
-			print("YOU WIN!!!!", runner)
 			win_sound.play(0.0)
 			player_wins.emit()
 			get_tree().paused = true

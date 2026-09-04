@@ -120,12 +120,22 @@ func find_ladders() -> void:
 	var vert_cells = used_cells
 	vert_cells.sort_custom(sort_x_asc_y_asc)
 	var golden := false
+	var hide_zones_on_gold := false
 
 	for cell_coords in vert_cells:
 		var ladderDef: Variant = null
 		var id := get_cell_alternative_tile(cell_coords)
 
 		if id == 7: # Golden Ladder
+			# If there's already a ladder being assessed, and it
+			# isn't golden, register the existing ladder and start
+			# defining a new one
+			if foundLadder and ladderStart and !golden:
+				ladderDef = { "type": "ladder", "x": x, "startY": ladderStart, "endY": y, "id": lid, "entity_id": lid, "hide_zones_on_gold": true }
+				ladderStart = cell_coords.y
+				
+				ladders.push_back(ladderDef)
+				lid += 1
 			golden = true
 
 		if cell_coords.y != (y + 1):
@@ -137,6 +147,10 @@ func find_ladders() -> void:
 				if golden:
 					ladderDef.golden = true
 
+				if hide_zones_on_gold:
+					ladderDef['hide_zones_on_gold'] = true
+					hide_zones_on_gold = false
+
 				ladders.push_back(ladderDef)
 				golden = false
 				lid += 1
@@ -145,10 +159,28 @@ func find_ladders() -> void:
 			if !foundLadder:
 				foundLadder = true
 				ladderStart = cell_coords.y
+			elif ladderStart and golden and id == 3:
+				# In this case, there was already a golden ladder
+				# going, and now we've found a non-golden ladder it's attached
+				# to
+				golden = false
+				hide_zones_on_gold = true
+				ladderDef = { "type": "ladder", "x": x, "startY": ladderStart, "endY": y, "id": lid, "entity_id": lid, "golden": true }
+				ladders.push_back(ladderDef)
+
+				ladderStart = cell_coords.y
+				lid += 1
+					
+
+
 		elif foundLadder:
 			foundLadder = false
 			ladderEnd = y
 			ladderDef = { "type": "ladder", "x": x, "startY": ladderStart, "endY": ladderEnd, "id": lid, "entity_id": lid }
+
+			if hide_zones_on_gold:
+				ladderDef['hide_zones_on_gold'] = true
+				hide_zones_on_gold = false
 
 			if golden:
 				ladderDef.golden = true
@@ -245,6 +277,17 @@ func find_platform_segments(platform: Dictionary) -> Array[Dictionary]:
 			return new_platforms
 	else:
 		return [platform]
+
+func activate_golden_ladder() -> void:
+	for child in get_children():
+		if child is LadderBottom and child.golden:
+			child.collision_box.disabled = false
+		elif child is LadderBottom and child.hide_on_gold:
+			child.collision_box.disabled = true
+		elif child is LadderTop and child.golden:
+			child.collision_box.disabled = false
+		elif child is LadderTop and child.hide_on_gold:
+			child.collision_box.disabled = true
 
 func find_platforms() -> void:
 	var foundPlatform := false
@@ -873,10 +916,16 @@ const LADDER_TOP_SCENE = preload("res://Elements/Ladder/ladder_top.tscn")
 const LADDER_BOTTOM_SCENE = preload("res://Elements/Ladder/ladder_bottom.tscn")
 
 func add_ladder_zones(ladder: Dictionary) -> void:
-	var top_instance = LADDER_TOP_SCENE.instantiate()
-	var bottom_instance = LADDER_BOTTOM_SCENE.instantiate()
+	var top_instance:LadderTop = LADDER_TOP_SCENE.instantiate() as LadderTop
+	var bottom_instance:LadderBottom = LADDER_BOTTOM_SCENE.instantiate() as LadderBottom
 
-	top_instance.golden = true if (ladder.has('golden') and ladder.golden) else false
+	var golden: bool = (ladder.has('golden') and ladder.golden)
+	var hide_zones_on_gold: bool = (ladder.has('hide_zones_on_gold') and ladder.hide_zones_on_gold)
+
+	top_instance.golden = golden
+	bottom_instance.golden = golden
+	top_instance.hide_on_gold = hide_zones_on_gold
+	bottom_instance.hide_on_gold = hide_zones_on_gold
 
 	var startYGlobal = get_cell_center_global(Vector2i(0, ladder.startY))
 	var endYGlobal = get_cell_center_global(Vector2i(0, ladder.endY))
@@ -887,6 +936,10 @@ func add_ladder_zones(ladder: Dictionary) -> void:
 
 	add_child(top_instance)
 	add_child(bottom_instance)
+
+	if golden:
+		top_instance.collision_box.disabled = true
+		bottom_instance.collision_box.disabled = true
 	
 	top_instance.connect('player_wins', on_player_wins)
 
@@ -900,8 +953,8 @@ func add_bar_zones(bar: Dictionary) -> void:
 	var endXGlobal = get_cell_center_global(Vector2i(bar.endX, 0))
 	var YGlobal = get_cell_center_global(Vector2i(0, bar.y)).y
 
-	left_instance.position = Vector2(startXGlobal.x - 20, YGlobal)
-	right_instance.position = Vector2(endXGlobal.x + 20, YGlobal)
+	left_instance.position = Vector2(startXGlobal.x - 17, YGlobal)
+	right_instance.position = Vector2(endXGlobal.x + 17, YGlobal)
 
 	add_child(left_instance)
 	add_child(right_instance)

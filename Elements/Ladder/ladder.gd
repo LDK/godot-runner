@@ -1,6 +1,7 @@
 extends Node2D
 class_name Ladder
 const LADDER_LANDING_MARGIN = 14
+@onready var climb_zone: LadderClimbZone = $ClimbZone
 
 func _on_climb_zone_area_entered(area: Area2D) -> void:
 	if area is RunnerFoot:

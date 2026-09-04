@@ -6,6 +6,7 @@
 size = Vector2(16, 16)
 
 [node name="BarEnd" type="Area2D" unique_id=228704383]
+z_index = 2
 texture_filter = 1
 script = ExtResource("1_3trup")
 
