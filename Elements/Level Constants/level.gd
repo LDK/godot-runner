@@ -19,6 +19,11 @@ var gold_collected: int = 0:
 			if value == gold_count:
 				all_gold_collected.emit()
 
+				for child in map.get_children():
+					if child is LadderBottom or child is LadderTop:
+						if child.golden:
+							child.collision_box.set_deferred("disabled", false)
+
 signal all_gold_collected()
 
 # Called when the node enters the scene tree for the first time.
@@ -46,6 +51,9 @@ func _ready() -> void:
 					gold_count += 1
 
 func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed('pause'):
+		toggle_pause_game()
+
 	if Input.is_action_just_pressed('reset'):
 		get_tree().paused = false
 		get_tree().reload_current_scene()
@@ -55,3 +63,7 @@ func _on_hero_gold_collected() -> void:
 
 func _on_player_wins() -> void:
 	circle_wipe.close()
+
+func toggle_pause_game() -> void:
+	var tree = get_tree()
+	tree.paused = !tree.paused

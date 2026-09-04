@@ -19,11 +19,6 @@ script = ExtResource("6_r7a1c")
 [node name="Hero" parent="." unique_id=702208146 instance=ExtResource("7_sqs0x")]
 position = Vector2(67, -104)
 
-[node name="Level Constants" parent="." unique_id=937608272 node_paths=PackedStringArray("hero", "map") instance=ExtResource("8_vy400")]
-hero = NodePath("../Hero")
-level_number = 6
-map = NodePath("../TileMapLayer")
-
 [node name="Golds" type="Node2D" parent="." unique_id=147532174]
 
 [node name="Gold" parent="Golds" unique_id=1483243167 instance=ExtResource("12_1ej3e")]
@@ -37,3 +32,59 @@ position = Vector2(473, 24)
 [node name="Enemy" parent="Enemies" unique_id=773071020 instance=ExtResource("13_xsckx")]
 position = Vector2(392, -104)
 has_gold = true
+
+[node name="Level Constants" parent="." unique_id=937608272 node_paths=PackedStringArray("hero", "map") instance=ExtResource("8_vy400")]
+hero = NodePath("../Hero")
+level_number = 6
+map = NodePath("../TileMapLayer")
+
+[connection signal="area_entered" from="TileMapLayer/Bar" to="TileMapLayer/Bar" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/Bar" to="TileMapLayer/Bar" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26732" to="TileMapLayer/@Area2D@26732" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26732" to="TileMapLayer/@Area2D@26732" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26733" to="TileMapLayer/@Area2D@26733" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26733" to="TileMapLayer/@Area2D@26733" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26734" to="TileMapLayer/@Area2D@26734" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26734" to="TileMapLayer/@Area2D@26734" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26735" to="TileMapLayer/@Area2D@26735" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26735" to="TileMapLayer/@Area2D@26735" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26736" to="TileMapLayer/@Area2D@26736" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26736" to="TileMapLayer/@Area2D@26736" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26737" to="TileMapLayer/@Area2D@26737" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26737" to="TileMapLayer/@Area2D@26737" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26738" to="TileMapLayer/@Area2D@26738" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26738" to="TileMapLayer/@Area2D@26738" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26739" to="TileMapLayer/@Area2D@26739" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26739" to="TileMapLayer/@Area2D@26739" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26740" to="TileMapLayer/@Area2D@26740" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26740" to="TileMapLayer/@Area2D@26740" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26741" to="TileMapLayer/@Area2D@26741" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26741" to="TileMapLayer/@Area2D@26741" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26742" to="TileMapLayer/@Area2D@26742" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26742" to="TileMapLayer/@Area2D@26742" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26743" to="TileMapLayer/@Area2D@26743" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26743" to="TileMapLayer/@Area2D@26743" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26744" to="TileMapLayer/@Area2D@26744" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26744" to="TileMapLayer/@Area2D@26744" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26745" to="TileMapLayer/@Area2D@26745" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26745" to="TileMapLayer/@Area2D@26745" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26746" to="TileMapLayer/@Area2D@26746" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26746" to="TileMapLayer/@Area2D@26746" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26747" to="TileMapLayer/@Area2D@26747" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26747" to="TileMapLayer/@Area2D@26747" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26748" to="TileMapLayer/@Area2D@26748" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26748" to="TileMapLayer/@Area2D@26748" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26749" to="TileMapLayer/@Area2D@26749" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26749" to="TileMapLayer/@Area2D@26749" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26752" to="TileMapLayer/@Area2D@26752" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26752" to="TileMapLayer/@Area2D@26752" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26753" to="TileMapLayer/@Area2D@26753" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26753" to="TileMapLayer/@Area2D@26753" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26755" to="TileMapLayer/@Area2D@26755" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26755" to="TileMapLayer/@Area2D@26755" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26756" to="TileMapLayer/@Area2D@26756" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26756" to="TileMapLayer/@Area2D@26756" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26757" to="TileMapLayer/@Area2D@26757" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26757" to="TileMapLayer/@Area2D@26757" method="_on_area_exited"]
+[connection signal="area_entered" from="TileMapLayer/@Area2D@26758" to="TileMapLayer/@Area2D@26758" method="_on_area_entered"]
+[connection signal="area_exited" from="TileMapLayer/@Area2D@26758" to="TileMapLayer/@Area2D@26758" method="_on_area_exited"]
