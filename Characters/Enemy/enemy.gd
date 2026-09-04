@@ -67,8 +67,8 @@ var next_dest: Variant = null:
 							choices.push_back(entity)
 					
 				if choices.size() > 1:
-					print("Choices choices! (from ", current_area.entity_id, " at ", my_coords(), ")")
 					var closest: Dictionary
+
 					var closest_distance: float = 9999.9
 					for choice in choices:
 						var dist: int = 0
@@ -248,24 +248,35 @@ func get_ground_direction_x(dest: Variant) -> float:
 			direction = 1.0
 
 	elif dest.type in ['bar']:
-		#print("hi")
 		var endX = dest.endX
 		var startX = dest.startX
 
-		if dest.startX < platform.startX:
-			startX = platform.startX - 1
-		if dest.endX > platform.endX:
-			endX = platform.endX + 1
+		if dest.y > platform.y:
+			var leftAvailable: bool = dest.startX < platform.startX
+			var rightAvailable: bool = dest.endX > platform.endX
 
-		#print(dest)
-		#print(endX, ", ", startX, ", ", coords.x)
-#
-		if startX < coords.x:
-			direction = -1.0
-		elif endX > coords.x:
-			direction = 1.0
-		
-		#print("direction", direction)
+			if leftAvailable and rightAvailable:
+				if abs(platform.startX - coords.x) > abs(platform.endX - coords.x):
+					direction = -1.0
+				else:
+					direction = 1.0
+
+			elif leftAvailable:
+				direction = -1.0
+
+			elif rightAvailable:
+				direction = 1.0
+
+		else:
+			if dest.startX < platform.startX:
+				startX = platform.startX - 1
+			if dest.endX > platform.endX:
+				endX = platform.endX + 1
+
+			if startX < coords.x:
+				direction = -1.0
+			elif endX > coords.x:
+				direction = 1.0
 
 	elif dest.type in ['platform']:
 		# Check both edges of the current platform for which will drop you on the proper target platform
@@ -274,9 +285,6 @@ func get_ground_direction_x(dest: Variant) -> float:
 		var dropLeft = map.level_drops[leftCoords] if map.level_drops.has(leftCoords) else null
 		var dropRight = map.level_drops[rightCoords] if map.level_drops.has(rightCoords) else null
 
-		#print("drop left from ", leftCoords, "?", dropLeft)
-		#print("platform?", map.platform_at(Vector2i(5,3)))
-		
 		# If the left side is valid
 		if dropLeft and dropLeft.entity_id == dest.entity_id:
 			# If the right side is also valid...
@@ -292,10 +300,13 @@ func get_ground_direction_x(dest: Variant) -> float:
 			else:
 				# Otherwise just go to the left
 				direction = -1.0
-		else:
-			# If not, try the right side.
-			if dropRight and dropRight.entity_id == dest.entity_id:
+
+		elif dropRight and dropRight.entity_id == dest.entity_id:
 				direction = 1.0
+
+		elif dest.has('y') and dest.y == coords.y + 1:
+			direction = 1.0 if dest.startX > coords.x else -1.0
+			pass
 
 	elif dest.type == 'ladder':
 		if dest.x < coords.x:
@@ -349,6 +360,7 @@ func get_hanging_direction_x(dest: Variant) -> float:
 			game_plan()
 		else:
 			state = RunnerState.FALLING
+			#print(is_on_floor())
 			return 0.0
 
 	if dest.entity_id == bar.entity_id and hero_area and dest.entity_id != hero_area.entity_id:
@@ -388,6 +400,10 @@ func _ground_process() -> void:
 
 	if direction:
 		velocity.x = direction * walk_speed
+		if is_on_wall():
+			#print("WALL")
+			global_position.y = map.get_cell_center_global(my_coords()).y
+			pass
 		if sprite.animation != 'walk':
 			sprite.play('walk')
 	else:
@@ -420,7 +436,7 @@ func _falling_process(delta: float) -> void:
 	velocity += (get_gravity() / 2) * delta
 	velocity.x = 0
 
-	if on_bar:
+	if on_bar and !is_on_floor():
 		state = RunnerState.HANGING
 
 	elif is_on_floor() or on_ladder:
@@ -433,10 +449,22 @@ func get_climbing_direction_x(coords: Vector2i, ladder: Variant) -> float:
 	var direction: float = 0.0
 
 	if next_dest.type == 'platform':
-		#print("next dest", next_dest)
 		if next_dest.startX <= ladder.x and ladder.x <= next_dest.endX:
 			# If the x coordinate of the ladder falls within the platform's range,
 			# that means we can just climb down and don't need to jump off.
+			if coords.y == next_dest.y - 1:
+				var center_y = map.get_cell_center_global(coords).y
+				var tile_below = map.get_cell_alternative_tile(Vector2i(coords.x, coords.y + 1))
+
+				# This handles the case where a ladder runs perpendicular to a
+				# platform and is thus considered part of the platform horizontally
+				# while running both above and below it vertically
+				if abs(global_position.y - center_y) < 3:
+					if tile_below in [3,7]:
+						global_position.y = center_y
+						direction = -1.0
+						state = RunnerState.GROUND
+
 			pass
 		elif next_dest.y > coords.y:
 			if next_dest.y == coords.y - 1:
@@ -447,8 +475,6 @@ func get_climbing_direction_x(coords: Vector2i, ladder: Variant) -> float:
 
 					if distance < .8:
 						direction = -1.0
-					#else:
-						#print("distance", distance)
 
 			elif map.level_drops.has(Vector2i(coords.x + 1, coords.y)):
 				if map.level_drops[Vector2i(coords.x + 1, coords.y)].entity_id == next_dest.entity_id:
@@ -456,8 +482,9 @@ func get_climbing_direction_x(coords: Vector2i, ladder: Variant) -> float:
 
 					if distance < .8:
 						direction = 1.0
-					#else:
-						#print("distance", distance)
+
+		else:
+			pass
 
 	elif next_dest.type == 'bar':
 		if next_dest.y == coords.y:
@@ -475,7 +502,6 @@ func get_climbing_direction_x(coords: Vector2i, ladder: Variant) -> float:
 	return direction
 
 func get_climbing_direction_y(coords: Vector2i, ladder: Variant) -> float:
-	#print(1)
 	if !next_dest:
 		return 0.0
 	
@@ -486,7 +512,7 @@ func get_climbing_direction_y(coords: Vector2i, ladder: Variant) -> float:
 	
 	if !ladder:
 		return 0.0
-		
+
 	if next_dest.type == 'platform' and next_dest.y <= coords.y:
 		climbY = next_dest.y - 5
 	elif next_dest.type == 'platform' and next_dest.y > coords.y + 2:
@@ -503,16 +529,24 @@ func get_climbing_direction_y(coords: Vector2i, ladder: Variant) -> float:
 	#print("coords", coords)
 	#print("climbY", climbY)
 	#print("climbY global", climbYGlobal)
+	#print("my area: ", my_area())
+	#print("TOL? ", top_of_ladder)
+	#print("global y: ", global_position.y)
+	#print("my coords global y:", map.get_cell_center_global(coords).y)
+
+	var area = my_area()
+
+	if top_of_ladder and area.type == 'ladder':
+		var check_coords := coords + Vector2i(0,1)
+		var p = map.platform_at(check_coords)
+		if p and p.entity_id == next_dest.entity_id:
+			state = RunnerState.GROUND
 
 	if climbY == null or climbYGlobal == null:
 		return 0.0
 
 	if abs(global_position.y - climbYGlobal) < .8:
 		direction = 0.0
-		#print("reached climbY", climbY)
-		#print("climbY global", map.get_cell_center_global(coords).y)
-		#print("climbY global2", climbYGlobal)
-		#print("my global", global_position)
 	elif climbYGlobal < global_position.y:
 		direction = -1.0
 	elif climbYGlobal > global_position.y:
@@ -580,7 +614,10 @@ func _climbing_process() -> void:
 		
 func _hanging_process() -> void:
 	velocity.y = 0
-	
+
+	# When climbing on a bar, vertically center the enemy within the grid square
+	global_position.y = map.get_cell_center_global(my_coords()).y
+
 	if dropX:
 		var coords = my_coords()
 		if coords.x == dropX:
