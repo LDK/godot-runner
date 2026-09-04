@@ -4,15 +4,11 @@ class_name GoldBrick
 var boss: Boss:
 	set(value):
 		boss = value
-		print("I found my boss! ", value)
 
 func _ready() -> void:
-	print("Scanning...")
 	for el in get_tree().root.get_child(0).get_children():
 		if el is Boss:
 			boss = el
-		else:
-			print("el: ", el.name)
 
 func handle_state_change(value: BrickState) -> void:
 	if value == BrickState.EMPTY:
