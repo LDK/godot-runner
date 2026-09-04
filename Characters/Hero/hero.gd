@@ -48,8 +48,8 @@ var current_area: Variant = null:
 					elif ladderRight and not ladderLeft:
 						current_area = ladderRight
 					elif not (ladderLeft or ladderRight):
-						print("This should never happen if I'm in a null area!!")
-						state = RunnerState.FALLING
+						# Rare occurence, generally in boss fight.
+						pass
 					else:
 						var distanceLeft = abs(global_position.x - map.get_cell_center_global(Vector2i(ladderLeft.x, 0)).x)
 						var distanceRight = abs(global_position.x - map.get_cell_center_global(Vector2i(ladderRight.x, 0)).x)
