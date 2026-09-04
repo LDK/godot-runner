@@ -46,7 +46,6 @@ func tween_down() -> void:
 
 func _ready() -> void:
 	if slot in [1,3]:
-		print("Slot ", slot)
 		tween_up()
 	else:
 		timer.start(1.0)

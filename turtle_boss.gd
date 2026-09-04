@@ -2,11 +2,15 @@ extends Boss
 
 enum TurtleState { WALKING, SELLING, ATTACK1, ATTACK2, BERZERK1, BERZERK2 }
 var stateNames = ['Walking', 'Selling', 'Attack 1', 'Attack 2', 'Berzerk1', 'Berzerk2']
-const LEFT_X: float = -90.0
+const LEFT_X: float = -60.0
 const RIGHT_X: float = 0.0
 const CENTER_X: float = -45.0
 const DEFAULT_EXTENSION = 24
-const DEFAULT_HEAD_LEVEL = 20
+
+const MIN_HEAD_LEVEL = -40
+const DEFAULT_HEAD_LEVEL = 10
+const HURT_HEAD_LEVEL = -20
+const MAX_HEAD_LEVEL = 60
 
 @onready var sell_timer: Timer = $SellTimer
 
@@ -23,22 +27,34 @@ func distribute_values(value) -> Array[float]:
 	# each should get 21, but neck[0] should get an additional 1 (making 22) and 2 should get the remaining .5 (making 21.5)
 	# 21 + 22 + 21.5 = 64.5
 	var i := 0
+	var neg: bool = (value < 0)
 
 	var values: Array[float] = [0.0, 0.0, 0.0]
 
-	while i + 1 <= value:
-		values[i % NECK_LENGTH] += 1.0
+	while i + 1 <= abs(round(value)):
+		values[i % NECK_LENGTH] += (1.0 * -1 if neg else 1)
 
 		i += 1
 
 	var remainder = value - i
+
+	if neg:
+		remainder = value + i
+
 	values[i % NECK_LENGTH] += remainder
 
+	if neg:
+		for val in values:
+			val = 3
+		values.reverse()
+
 	return values
+
 
 var head_level: float = 0.0:
 	set(value):
 		if value != head_level:
+			value = min(MAX_HEAD_LEVEL, max(value, MIN_HEAD_LEVEL))
 			head_level = value
 
 		var neck_ys: Array[float] = distribute_values(value)
@@ -135,10 +151,12 @@ func kill_tweens_on(obj: Object) -> void:
 func _process(delta: float) -> void:
 	if shaking:
 		position.y = original_y + randf_range(-sell_intensity, sell_intensity)
+	else:
+		tween_head((hero.position.y - 16) * -1, .5)
 
 func fling_hero():
 	if !hero:
-		print('lost hero instance somehow', hero)
+		return
 	hero.collision_box.disabled = true
 	hero.state = Runner.RunnerState.FLUNG
 	
@@ -163,7 +181,6 @@ func _ready() -> void:
 		hero.connect("hero_zapping", _on_hero_zap)
 
 func _on_hero_zap(zapping: bool) -> void:
-	print("hero zapping?", zapping)
 	if zapping:
 		hero.anchor = self
 	else:
@@ -174,7 +191,7 @@ func die() -> void:
 
 func take_hit() -> void:
 	tween_neck(0.0, 0.5)
-	tween_head(0.0, 0.5)
+	tween_head(HURT_HEAD_LEVEL, 0.5)
 	is_left = false
 	is_right = false
 	state = TurtleState.SELLING
@@ -184,5 +201,4 @@ func take_hit() -> void:
 	fling_hero()
 
 func _on_sell_timer_timeout() -> void:
-	print("Timer done.")
 	state = TurtleState.WALKING
