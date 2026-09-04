@@ -462,6 +462,8 @@ func get_climbing_direction_x(coords: Vector2i, ladder: Variant) -> float:
 				if abs(global_position.y - center_y) < 3:
 					if tile_below in [3,7]:
 						global_position.y = center_y
+						# short-term placeholder value, definitely
+						# replace with more complex logic.
 						direction = -1.0
 						state = RunnerState.GROUND
 
