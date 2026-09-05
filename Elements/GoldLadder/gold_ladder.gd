@@ -5,12 +5,10 @@ class_name GoldLadder
 
 var level: Level:
 	set(value):
-		print("GL level set value: ", value)
 		if value != level:
 			level = value
 
 		if value:
-			print("go go go")
 			(value as Level).connect("all_gold_collected", _on_level_gold_collected)
 
 var map: LevelMap:
@@ -38,8 +36,6 @@ func _ready() -> void:
 	if root.level:
 		level = root.level
 
-	print("root.level: ", root.level)
 func _on_level_gold_collected() -> void:
-	print("Got all the gold")
 	active = true
 	map.call_deferred("activate_golden_ladder")

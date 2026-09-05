@@ -18,7 +18,7 @@ var gold_collected: int = 0:
 		if value != gold_collected:
 			gold_collected = value
 			
-			print("Gold collected: ", gold_collected, " of ", gold_count)
+			#print("Gold collected: ", gold_collected, " of ", gold_count)
 			
 			if value == gold_count:
 				all_gold_collected.emit()
@@ -35,7 +35,6 @@ func _on_hero_gold_collected() -> void:
 	gold_collected = gold_collected + 1
 
 func _ready() -> void:
-	print("do I have a map: ", map)
 	gold_count = golds.get_children().size()
 
 	for enemy in enemies.get_children():

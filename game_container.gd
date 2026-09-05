@@ -9,8 +9,6 @@ class_name GameContainer
 
 var level: Level:
 	set(value):
-		print("setting level: ", value)
-		print("it has this map: ", value.map)
 		if value != level:
 			level = value
 			value.hero.map = value.map
@@ -23,6 +21,7 @@ var level: Level:
 
 func _on_player_wins() -> void:
 	screen_elements.circle_wipe.close()
+	screen_elements.win_sound.play(0.0)
 	if level.next_scene and level.next_scene is PackedScene:
 		load_scene(level.next_scene, true)
 	
@@ -33,7 +32,7 @@ func load_scene(packed: PackedScene, defer: bool = false) -> void:
 		child_level.queue_free()
 
 	var scene = packed.instantiate()
-	print("Scene: ", scene)
+
 	if defer:
 		level_container.call_deferred("add_child", scene)
 	else:
@@ -41,7 +40,6 @@ func load_scene(packed: PackedScene, defer: bool = false) -> void:
 	if defer:
 		await scene.ready
 	level = scene
-	print("Ok go...")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
