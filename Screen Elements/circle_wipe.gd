@@ -10,7 +10,6 @@ func open() -> void:
 	tween.tween_property(self, "material:shader_parameter/radius", OPEN_RADIUS, 1)
 
 func close() -> void:
-	print("CLOSE")
 	(material as ShaderMaterial).set_shader_parameter("radius", OPEN_RADIUS)
 	var tween := create_tween()
 	tween.tween_property(self, "material:shader_parameter/radius", CLOSED_RADIUS, 1)

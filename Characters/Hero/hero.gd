@@ -39,12 +39,12 @@ var current_area: Variant = null:
 					var ladderLeft: Variant = map.ladder_at(Vector2i(coords.x - 1, coords.y))
 					var ladderRight: Variant = map.ladder_at(Vector2i(coords.x + 1, coords.y))
 
-					print("ladderLeft", ladderLeft)
-					print("ladderRight", ladderRight)
+					#print("ladderLeft", ladderLeft)
+					#print("ladderRight", ladderRight)
 
 					if ladderLeft and not ladderRight:
 						current_area = ladderLeft
-						print("current area is now ", current_area, value)
+						#print("current area is now ", current_area, value)
 					elif ladderRight and not ladderLeft:
 						current_area = ladderRight
 					elif not (ladderLeft or ladderRight):

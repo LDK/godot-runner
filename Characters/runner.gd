@@ -21,15 +21,13 @@ var map: LevelMap
 
 func _ready() -> void:
 	await get_parent().ready
-	print("runner _ready")
+
 	if self is Hero:
 		level = get_parent() as Level
 	elif self is Enemy:
 		level = get_parent().get_parent() as Level
-	print("level: ", level)
+
 	if level and level is Level:
-		print("map: ", level.map)
-		print("I am a", ' Hero' if self is Hero else 'n Enemy', '.')
 		map = level.map
 	pass
 

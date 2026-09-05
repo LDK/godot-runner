@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://la3jb0872xfg" path="res://Screen Elements/screen_boundaries.tscn" id="2_22s0b"]
 [ext_resource type="Shader" uid="uid://djra04pgb1cq6" path="res://vignette.gdshader" id="3_qnsmj"]
 [ext_resource type="Script" uid="uid://dvkpprokqpo1x" path="res://Screen Elements/circle_wipe.gd" id="4_d6i67"]
+[ext_resource type="AudioStream" uid="uid://behpvyih3abel" path="res://Assets/Audio/you-win.mp3" id="5_iv618"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ypdia"]
 shader = ExtResource("3_qnsmj")
@@ -40,3 +41,8 @@ offset_top = -180.0
 offset_right = 480.0
 offset_bottom = 145.0
 script = ExtResource("4_d6i67")
+
+[node name="WinSound" type="AudioStreamPlayer" parent="." unique_id=421286015]
+process_mode = 3
+stream = ExtResource("5_iv618")
+volume_db = -14.771

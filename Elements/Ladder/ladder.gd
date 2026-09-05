@@ -21,7 +21,7 @@ func _on_climb_zone_body_entered(body: Node2D) -> void:
 		runner.add_ladder(self)
 
 		if runner.falling:
-			print("Runner fell in")
+			#print("Runner fell in")
 			runner.falling = false
 			runner.velocity.y = 0
 			runner.position.y = position.y - LADDER_LANDING_MARGIN
