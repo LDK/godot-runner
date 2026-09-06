@@ -17,3 +17,12 @@ position = Vector2(534, 0)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BoundaryRight" unique_id=408078974]
 position = Vector2(-43, -21)
 shape = SubResource("RectangleShape2D_qvrfq")
+
+[node name="BoundaryBottom" type="StaticBody2D" parent="." unique_id=2114307789]
+position = Vector2(194, 215.99998)
+rotation = 1.5707964
+scale = Vector2(1.3, 1.3)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BoundaryBottom" unique_id=2048566185]
+position = Vector2(-43, -21)
+shape = SubResource("RectangleShape2D_qvrfq")
