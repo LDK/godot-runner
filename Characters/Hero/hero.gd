@@ -13,6 +13,7 @@ var zapping := false:
 @onready var zap_check_left:RayCast2D = $ZapCheckLeft
 @onready var zap_check_right:RayCast2D = $ZapCheckRight
 
+var zappable_bricks: Array[Dissolvable] = []
 var anchor_local_offset := Vector2.ZERO
 
 # This will either be a Node2D or null
@@ -123,8 +124,6 @@ func check_brick_zap(zap: RayCast2D) -> Dissolvable:
 		return null
 
 	var object = zap.get_collider()
-	#print("object: ", object)
-
 
 	if !object is BrickBody:
 		return null
@@ -147,6 +146,12 @@ func check_for_zap_block(zap: RayCast2D, zap_check: RayCast2D) -> bool:
 		blocked = true
 	
 	return blocked
+
+func highlight_zap_options() -> void:
+	zappable_bricks = [check_brick_zap(zap_left), check_brick_zap(zap_right)]
+	for zappable in zappable_bricks:
+		if zappable is Brick:
+			(zappable as Brick).highlight = true	
 
 func _ground_process() -> void:
 	## ZAPPING ##
@@ -185,6 +190,8 @@ func _ground_process() -> void:
 
 	## MOVEMENT ##
 	var direction := get_direction_x()
+
+	highlight_zap_options()
 
 	if direction:
 		velocity.x = direction * walk_speed
@@ -260,7 +267,13 @@ func _hanging_process() -> void:
 		state = RunnerState.FALLING
 		on_bar = false
 		return
-	
+
+	if Input.is_action_pressed("ui_up"):
+		var coords = my_coords()
+		if map.get_cell_alternative_tile(Vector2i(coords.x, coords.y - 1)) in [3, 7]:
+			velocity.y = -1 * climb_speed
+			state = RunnerState.CLIMBING
+
 	var direction := get_direction_x()
 
 	if direction:
@@ -280,9 +293,18 @@ func _flung_process() -> void:
 		collision_box.disabled = false
 		state = RunnerState.FALLING
 
+func clear_zap_highlights() -> void:
+	for zappable in zappable_bricks:
+		if zappable is Brick:
+			(zappable as Brick).highlight = false
+
+
+
 func _physics_process(delta: float) -> void:
 	if not (map and level):
 		return
+
+	clear_zap_highlights()
 
 	if state == RunnerState.DEAD:
 		return

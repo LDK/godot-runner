@@ -262,8 +262,9 @@ script = ExtResource("1_u1ipw")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=751552765]
 position = Vector2(0, -1)
 sprite_frames = SubResource("SpriteFrames_qvrfq")
-animation = &"idle"
+animation = &"walk"
 autoplay = "idle"
+frame = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1345373268]
 shape = SubResource("CapsuleShape2D_qvrfq")

@@ -278,7 +278,7 @@ func get_ground_direction_x(dest: Variant) -> float:
 			elif endX > coords.x:
 				direction = 1.0
 
-	elif dest.type in ['platform']:
+	elif dest.type in ['platform'] and platform and platform.has('startX'):
 		# Check both edges of the current platform for which will drop you on the proper target platform
 		var leftCoords = Vector2i(platform.startX - 1, platform.y)
 		var rightCoords = Vector2i(platform.endX + 1, platform.y)

@@ -1,6 +1,18 @@
 extends Dissolvable
 class_name Brick
 
+const HIGHLIGHT_TIME := 0.05
+const HIGHLIGHT_MIX := .3
+const DEFAULT_MIX := 0.0
+
+var highlight: bool = false:
+	set(value):
+		if value != highlight:	
+			var tween := create_tween()
+			tween.tween_property(sprite, "material:shader_parameter/mix_weight", HIGHLIGHT_MIX if value else DEFAULT_MIX, HIGHLIGHT_TIME)
+		
+			highlight = value
+
 func transition_dissolve() -> void:
 	sprite.play("dissolve")
 	await sprite.animation_finished
