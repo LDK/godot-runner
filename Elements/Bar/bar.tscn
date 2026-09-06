@@ -1,17 +1,17 @@
 [gd_scene format=3 uid="uid://pqw42tlynrdq"]
 
 [ext_resource type="Script" uid="uid://dk6qlw2lydls1" path="res://Elements/Bar/bar.gd" id="1_sbg6f"]
-[ext_resource type="Texture2D" uid="uid://dg3mnm3ieg82l" path="res://Assets/NES - Lode Runner - Miscellaneous - Tileset.png" id="2_a0eh7"]
+[ext_resource type="Texture2D" uid="uid://dylnikqh8vvxe" path="res://Assets/bars-lines.png" id="2_4vx5e"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_qyha7"]
-atlas = ExtResource("2_a0eh7")
-region = Rect2(48, 0, 16, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_g8naf"]
+atlas = ExtResource("2_4vx5e")
+region = Rect2(0, 0, 16, 16)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_qvrfq"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_qyha7")
+"texture": SubResource("AtlasTexture_g8naf")
 }],
 "loop": 1,
 "name": &"default",
