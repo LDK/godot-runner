@@ -60,6 +60,7 @@ func sort_x_asc_y_asc(a:Vector2i, b:Vector2i) -> bool:
 var bars: Array[Dictionary] = []
 var ladders: Array[Dictionary] = []
 var platforms: Array[Dictionary] = []
+var ziplines: Array[Dictionary] = []
 
 var level_drops: Dictionary = {}
 
@@ -98,6 +99,7 @@ func find_bars() -> void:
 			barDef = { "type": "bar", "y": y, "startX": barStart, "endX": barEnd, "id": bid, "entity_id": eid_offset + bid }
 			bid += 1
 			bars.push_back(barDef)
+			find_bar_drop_platforms(barDef)
 
 		if cell_coords.y != y:
 			y = cell_coords.y
@@ -369,7 +371,6 @@ func find_platforms() -> void:
 					segment.entity_id = pid + eid_offset
 					platforms.push_back(segment)
 					pid += 1
-
 
 func check_ladder_at_coords(x: int, y: int, dict_arr: Array[int]) -> void:
 	var tile_id = get_cell_alternative_tile(Vector2i(x,y))
@@ -785,6 +786,95 @@ func find_ladder_bars() -> void:
 		bids.sort()
 		ladder.bars = bids
 
+func find_ziplines() -> void:
+	var y: int = top_left.y
+	var x: int = top_left.x
+	
+	var zid: int = 1
+	
+	var eid_offset = ladders.size() + platforms.size() + bars.size()
+
+	#barDef = { "type": "bar", "y": y, "startX": barStart, "endX": barEnd, "id": bid, "entity_id": eid_offset + bid }
+	const LEFT_ZIP_ID = 8
+	const RIGHT_ZIP_ID = 9
+	const ZIPLINE_IDS = [LEFT_ZIP_ID, RIGHT_ZIP_ID]
+
+	var processed_cells: Array[Vector2i] = []
+
+	for cell_coords in used_cells:
+		print("cell_coords: ", cell_coords)
+		if cell_coords in processed_cells:
+			continue
+
+		var id := get_cell_alternative_tile(cell_coords)
+
+		if id not in ZIPLINE_IDS:
+			continue
+
+		var startX := cell_coords.x
+		var startY := cell_coords.y
+
+		var ziplineDef: Variant = null
+
+		ziplineDef = { "type": "zipline", "startX": startX, "startY": startY, "id": zid, "entity_id": eid_offset + zid }
+		processed_cells.push_back(cell_coords)
+
+
+		var foundEnd := false
+
+		var ziplineLength := 1
+		var endX := startX
+		var endY := startY
+
+		ziplineDef["direction"] = 'left' if id == LEFT_ZIP_ID else 'right'
+		
+		while !foundEnd:
+			var diagDownLeftCoords := Vector2i(startX - ziplineLength, startY + ziplineLength)
+			var diagDownRightCoords := Vector2i(startX + ziplineLength, startY + ziplineLength)
+
+			var diagCoords := diagDownLeftCoords if id == LEFT_ZIP_ID else diagDownRightCoords
+
+			if (diagCoords.x < top_left.x or diagCoords.x > bot_right.x or diagCoords.y > bot_right.y):
+				foundEnd = true
+			elif get_cell_alternative_tile(diagCoords) not in ZIPLINE_IDS:
+				foundEnd = true
+
+			if foundEnd:
+				ziplineDef["length"] = ziplineLength
+				ziplineDef["endX"] = endX
+				ziplineDef["endY"] = endY
+			else:
+				ziplineLength += 1
+				endX = diagCoords.x
+				endY = diagCoords.y
+				processed_cells.push_back(diagCoords)
+
+		ziplines.push_back(ziplineDef)
+		add_zipline_zones(ziplineDef)
+		zid += 1
+
+		print("ziplineDef: ", ziplineDef)
+		print("x: ", x)
+		print("y: ", y)
+
+		x = cell_coords.x
+		y = cell_coords.y
+
+		if ziplineDef:
+			add_zipline_zones(ziplineDef)
+
+const ZIPLINE_RIGHT_END_SCENE = preload("res://Elements/ZipLine/zip_line_right_end.tscn")
+const ZIPLINE_LEFT_END_SCENE = preload("res://Elements/ZipLine/zip_line_left_end.tscn")
+
+func add_zipline_zones(zipline: Dictionary) -> void:
+	var end_instance = (ZIPLINE_LEFT_END_SCENE if zipline.direction == 'left' else ZIPLINE_RIGHT_END_SCENE).instantiate()
+	var xGlobal = get_cell_center_global(Vector2i(zipline.endX, 0)).x
+	var yGlobal = get_cell_center_global(Vector2i(0, zipline.endY)).y
+
+	end_instance.position = Vector2(xGlobal, yGlobal)
+
+	call_deferred("add_child", end_instance)
+
 func add_bar_drop_list(bar: Dictionary) -> void:
 	var x: int = bar.startX
 	var drops: Dictionary = {}
@@ -814,6 +904,7 @@ func _ready() -> void:
 	used_cells.sort_custom(sort_y_asc_x_asc)
 	find_platforms()
 	find_bars()
+	find_ziplines()
 
 	find_platform_bars()
 	find_platform_ladders()
@@ -849,6 +940,11 @@ func _ready() -> void:
 	#for platform in platforms:
 		#print(platform)
 
+	print("ziplines: ")
+	for zipline in ziplines:
+		print(zipline)
+
+
 	
 	#print(build_entity_list())
 	#print("------------")
@@ -856,13 +952,10 @@ func _ready() -> void:
 	#print(" ")
 	#
 	#print(find_shortest_path(build_entity_list(), 8, 9))
-	
 
-## Finds the shortest path between a start ID and a target ID using BFS.
-## Returns an Array of IDs representing the path, or an empty Array if no path exists.
 func find_shortest_path(start_id: int, target_id: int) -> Array:
-	# Edge case: Already at the destination
-	if start_id == target_id:
+	var already_there = (start_id == target_id)
+	if already_there:
 		return [start_id]
 		
 	# Queue stores arrays representing paths: e.g., [[1], [1, 7], [1, 9]]

@@ -1,14 +1,16 @@
 extends CharacterBody2D
 class_name Runner
 
-enum RunnerState { GROUND, HANGING, FALLING, CLIMBING, STUCK, DEAD, RECOVERING, RESPAWNING, FLUNG }
-var stateNames:Array[String] = ['Ground', 'Hanging', 'Falling', 'Climbing', 'Stuck', 'Dead', 'Recovering', 'Respawning']
+enum RunnerState { GROUND, HANGING, FALLING, CLIMBING, STUCK, DEAD, RECOVERING, RESPAWNING, FLUNG, ZIPPING }
+var stateNames:Array[String] = ['Ground', 'Hanging', 'Falling', 'Climbing', 'Stuck', 'Dead', 'Recovering', 'Respawning', 'Flung', 'Zipping']
 
 @onready var sprite:AnimatedSprite2D = $AnimatedSprite2D
 @onready var collision_box:CollisionShape2D = $CollisionShape2D
 
 @export var walk_speed: float = 125.0
 @export var climb_speed: float = 110.0
+@export var zip_speed: float = 70.0
+var zip_horiz_offset: float = 0.9
 
 var level: Level:
 	set(value):
@@ -18,6 +20,10 @@ var level: Level:
 				map = level.map
 
 var map: LevelMap
+
+func center_runner_on_cell() -> void:
+	var coords := my_coords()
+	global_position = map.get_cell_center_global(coords)
 
 func _ready() -> void:
 	await get_parent().ready
@@ -154,4 +160,23 @@ func remove_bar(bar: Bar) -> void:
 func _on_bars_changed():
 	var bar_count = bars_touched.size()
 	on_bar = bar_count > 0
+	
+## ZIPLINES ##
+
+var on_zipline := false
+var end_of_zipline := false
+var ziplines_touched: Array[ZipLine] = []
+
+func add_zipline(zipline: ZipLine) -> void:
+	ziplines_touched.push_front(zipline)
+	_on_ziplines_changed()
+
+func remove_zipline(zipline: ZipLine) -> void:
+	if ziplines_touched.has(zipline):
+		ziplines_touched.erase(zipline)
+	_on_ziplines_changed()
+
+func _on_ziplines_changed():
+	var zipline_count = ziplines_touched.size()
+	on_zipline = zipline_count > 0
 	

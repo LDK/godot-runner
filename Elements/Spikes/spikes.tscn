@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://dvpnrbrv1vae1"]
+
+[ext_resource type="Script" uid="uid://c38g1u1u4lmex" path="res://Elements/Spikes/spikes.gd" id="1_kxhiq"]
+[ext_resource type="Texture2D" uid="uid://dylnikqh8vvxe" path="res://Assets/bars-lines.png" id="2_hybff"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bq24o"]
+atlas = ExtResource("2_hybff")
+region = Rect2(96, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qvrfq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bq24o")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 12.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4l21p"]
+size = Vector2(16, 5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c1vug"]
+size = Vector2(13, 2)
+
+[node name="Spikes" type="Node2D" unique_id=2045724571]
+texture_filter = 1
+script = ExtResource("1_kxhiq")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1923703022]
+sprite_frames = SubResource("SpriteFrames_qvrfq")
+autoplay = "default"
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1495123968]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=798685533]
+position = Vector2(0, -5.5)
+shape = SubResource("RectangleShape2D_4l21p")
+
+[node name="KillZone" type="Area2D" parent="." unique_id=647572446]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KillZone" unique_id=1450075438]
+position = Vector2(0.5, -8)
+shape = SubResource("RectangleShape2D_c1vug")
+
+[connection signal="body_entered" from="KillZone" to="." method="_on_kill_zone_body_entered"]
