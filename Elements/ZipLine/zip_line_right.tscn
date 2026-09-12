@@ -18,8 +18,8 @@ animations = [{
 "speed": 12.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_qvrfq"]
-size = Vector2(24.041634, 1)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m4fjy"]
+size = Vector2(12.000002, 5.000001)
 
 [node name="ZipLine" type="Area2D" unique_id=228704383]
 texture_filter = 1
@@ -29,11 +29,11 @@ script = ExtResource("1_m4fjy")
 sprite_frames = SubResource("SpriteFrames_qvrfq")
 autoplay = "default"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1604493289]
-position = Vector2(-0.5000005, -0.5000005)
-rotation = 0.7853982
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=855498788]
+position = Vector2(1.5, -1.728515e-07)
+rotation = 1.5707964
 scale = Vector2(0.9999999, 0.9999999)
-shape = SubResource("RectangleShape2D_qvrfq")
+shape = SubResource("RectangleShape2D_m4fjy")
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]
 [connection signal="area_exited" from="." to="." method="_on_area_exited"]

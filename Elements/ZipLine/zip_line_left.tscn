@@ -19,7 +19,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qvrfq"]
-size = Vector2(24.041634, 1)
+size = Vector2(12.000002, 5.000001)
 
 [node name="ZipLine" type="Area2D" unique_id=228704383]
 texture_filter = 1
@@ -32,8 +32,8 @@ autoplay = "default"
 flip_h = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1604493289]
-position = Vector2(0.5000005, -0.5000005)
-rotation = -0.7853982
+position = Vector2(-1.4999999, -3.0398564e-07)
+rotation = 1.5707964
 scale = Vector2(0.9999999, 0.9999999)
 shape = SubResource("RectangleShape2D_qvrfq")
 

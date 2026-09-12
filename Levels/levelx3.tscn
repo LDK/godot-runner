@@ -1,0 +1,129 @@
+[gd_scene format=4 uid="uid://n7g4utcpo0xq"]
+
+[ext_resource type="Script" uid="uid://b3ulyxngsw8vl" path="res://Levels/game_level.gd" id="1_j3uo2"]
+[ext_resource type="PackedScene" uid="uid://cs2uy3o0c0j61" path="res://turtle_boss_level.tscn" id="2_2b74x"]
+[ext_resource type="TileSet" uid="uid://d33t0klsjh0l8" path="res://Assets/tileset.tres" id="3_dkngo"]
+[ext_resource type="Script" uid="uid://davi5rtkmi7pl" path="res://Elements/Map/map.gd" id="4_5hx4b"]
+[ext_resource type="PackedScene" uid="uid://cgavv5lbnc0ai" path="res://Characters/Hero/hero.tscn" id="5_grknq"]
+[ext_resource type="PackedScene" uid="uid://imus5m3h31dc" path="res://Items/Gold/gold.tscn" id="6_y0wfw"]
+[ext_resource type="PackedScene" uid="uid://dqhvwr4vyeil1" path="res://Characters/Enemy/enemy.tscn" id="7_h3nvp"]
+
+[node name="Level 4" type="Node2D" unique_id=1580821969]
+texture_filter = 1
+script = ExtResource("1_j3uo2")
+next_scene = ExtResource("2_2b74x")
+
+[node name="Map" type="TileMapLayer" parent="." unique_id=1229703736]
+physics_interpolation_mode = 1
+tile_map_data = PackedByteArray("AAAAAP//AQAAAAAAAQABAP//AQAAAAAAAQACAP//AQAAAAAAAQADAP//AQAAAAAAAQAEAP//AQAAAAAAAQAFAP//AQAAAAAAAQAGAP//AQAAAAAAAQAHAP//AQAAAAAAAQAIAP//AQAAAAAAAQAJAP//AQAAAAAAAQALAP//AQAAAAAAAQAMAP//AQAAAAAAAQAPAP//AQAAAAAAAQAQAP//AQAAAAAAAQARAP//AQAAAAAAAwASAP//AQAAAAAAAQATAP//AQAAAAAAAQAUAP//AQAAAAAAAQAWAP//AQAAAAAAAQAXAP//AQAAAAAAAQAYAP//AQAAAAAAAQAZAP//AQAAAAAAAQAaAP//AQAAAAAAAQAbAP//AQAAAAAAAQAAAPr/AQAAAAAAAQABAPr/AQAAAAAAAwACAPr/AQAAAAAAAQADAPr/AQAAAAAAAQAEAPr/AQAAAAAAAQAFAPr/AQAAAAAAAQAbAPr/AQAAAAAAAQAaAPr/AQAAAAAAAwAZAPr/AQAAAAAAAQAYAPr/AQAAAAAAAQAXAPr/AQAAAAAAAQAWAPr/AQAAAAAAAQD///r/AQAAAAAAAQD+//r/AQAAAAAAAQAcAPr/AQAAAAAAAQAdAPr/AQAAAAAAAQATAAIAAQAAAAAAAQASAAIAAQAAAAAAAQARAAIAAQAAAAAAAQAQAAIAAQAAAAAAAQAPAAIAAQAAAAAAAQAOAAIAAQAAAAAAAQANAAIAAQAAAAAAAQAMAAIAAQAAAAAAAQALAAIAAQAAAAAAAQAKAAIAAQAAAAAAAQAJAAIAAQAAAAAAAQAIAAIAAQAAAAAAAQABAP7/AQAAAAAAAwABAP3/AQAAAAAAAwABAPz/AQAAAAAAAwABAPv/AQAAAAAAAwAaAP3/AQAAAAAAAwAaAPz/AQAAAAAAAwAaAPv/AQAAAAAAAwAKAAAAAQAAAAAAAwAKAAEAAQAAAAAAAwARAAAAAQAAAAAAAwARAAEAAQAAAAAAAwAHAAIAAQAAAAAAAwAHAAMAAQAAAAAAAwAHAAQAAQAAAAAAAwAUAAIAAQAAAAAAAwAUAAMAAQAAAAAAAwAUAAQAAQAAAAAAAwAGAPn/AQAAAAAABAAHAPn/AQAAAAAABAAIAPn/AQAAAAAABAAJAPn/AQAAAAAABAAKAPn/AQAAAAAABAALAPn/AQAAAAAABAAMAPn/AQAAAAAABAAPAPn/AQAAAAAABAAQAPn/AQAAAAAABAARAPn/AQAAAAAABAASAPn/AQAAAAAABAATAPn/AQAAAAAABAAUAPn/AQAAAAAABAALAPv/AQAAAAAACAAMAPv/AQAAAAAABAANAPv/AQAAAAAABAAOAPv/AQAAAAAABAANAPn/AQAAAAAABAAOAPn/AQAAAAAABAAaAP7/AQAAAAAAAwAKAP//AQAAAAAAAwAPAPv/AQAAAAAABAAdAAIAAQAAAAAAAQAbAPz/AQAAAAAABAAcAPz/AQAAAAAABAAdAPz/AQAAAAAABAAVAPn/AQAAAAAACAAHAAUAAQAAAAAAAwAHAAYAAQAAAAAAAwAHAAcAAQAAAAAAAwAUAAUAAQAAAAAAAwAUAAYAAQAAAAAAAwAUAAcAAQAAAAAAAwD+/wgAAQAAAAAAAQD//wgAAQAAAAAAAQAAAAgAAQAAAAAAAQABAAgAAQAAAAAAAQACAAgAAQAAAAAAAQADAAgAAQAAAAAAAQAEAAgAAQAAAAAAAQAFAAgAAQAAAAAAAQAGAAgAAQAAAAAAAQAHAAgAAQAAAAAAAQAIAAgAAQAAAAAAAQAJAAgAAQAAAAAAAQAKAAgAAQAAAAAAAQALAAgAAQAAAAAAAQAMAAgAAQAAAAAAAQANAAgAAQAAAAAAAQAOAAgAAQAAAAAAAQAPAAgAAQAAAAAAAQAQAAgAAQAAAAAAAQARAAgAAQAAAAAAAQASAAgAAQAAAAAAAQATAAgAAQAAAAAAAQAUAAgAAQAAAAAAAQAVAAgAAQAAAAAAAQAWAAgAAQAAAAAAAQAXAAgAAQAAAAAAAQAYAAgAAQAAAAAAAQAZAAgAAQAAAAAAAQAaAAgAAQAAAAAAAQAbAAgAAQAAAAAAAQAcAAgAAQAAAAAAAQAdAAgAAQAAAAAAAQAIAPj/AQAAAAAABwAIAPf/AQAAAAAABwAIAPb/AQAAAAAABwARAPz/AQAAAAAACQASAP3/AQAAAAAABAAQAPv/AQAAAAAACQAKAPz/AQAAAAAACAAJAP3/AQAAAAAACAATAP3/AQAAAAAABAAUAP7/AQAAAAAAAgAUAPv/AQAAAAAAAgATAPv/AQAAAAAAAgASAPv/AQAAAAAAAgAHAPv/AQAAAAAAAgAIAPv/AQAAAAAAAgAJAPv/AQAAAAAAAgAVAAAAAQAAAAAACQAWAAEAAQAAAAAACQAXAAIAAQAAAAAACQAYAAQAAQAAAAAAAQAIAP7/AQAAAAAACAA=")
+tile_set = ExtResource("3_dkngo")
+script = ExtResource("4_5hx4b")
+
+[node name="Hero" parent="." unique_id=702208146 instance=ExtResource("5_grknq")]
+position = Vector2(374, -103)
+
+[node name="Golds" type="Node2D" parent="." unique_id=147532174]
+
+[node name="Gold" parent="Golds" unique_id=1483243167 instance=ExtResource("6_y0wfw")]
+position = Vector2(73, -24)
+
+[node name="Gold2" parent="Golds" unique_id=1545277747 instance=ExtResource("6_y0wfw")]
+position = Vector2(473, 24)
+
+[node name="Gold3" parent="Golds" unique_id=2084210202 instance=ExtResource("6_y0wfw")]
+position = Vector2(328, -40)
+
+[node name="Gold4" parent="Golds" unique_id=60632948 instance=ExtResource("6_y0wfw")]
+position = Vector2(392, 56)
+
+[node name="BG" type="Control" parent="." unique_id=1341495944]
+z_index = -1
+layout_mode = 3
+anchors_preset = 0
+offset_left = -4.0
+offset_top = -6.0
+offset_right = 36.0
+offset_bottom = 34.0
+
+[node name="ColorRect" type="ColorRect" parent="BG" unique_id=1927374117]
+z_index = -2
+layout_mode = 0
+offset_left = -29.0
+offset_top = -154.0
+offset_right = 485.0
+offset_bottom = 151.0
+color = Color(0, 0, 0, 1)
+
+[node name="Enemies" type="Node2D" parent="." unique_id=1588275578]
+
+[node name="Enemy" parent="Enemies" unique_id=1733773878 instance=ExtResource("7_h3nvp")]
+position = Vector2(63, -102)
+
+[connection signal="area_entered" from="Map/@Area2D@76841" to="Map/@Area2D@76841" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76841" to="Map/@Area2D@76841" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76842" to="Map/@Area2D@76842" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76842" to="Map/@Area2D@76842" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76843" to="Map/@Area2D@76843" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76843" to="Map/@Area2D@76843" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76844" to="Map/@Area2D@76844" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76844" to="Map/@Area2D@76844" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76845" to="Map/@Area2D@76845" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76845" to="Map/@Area2D@76845" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76846" to="Map/@Area2D@76846" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76846" to="Map/@Area2D@76846" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76847" to="Map/@Area2D@76847" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76847" to="Map/@Area2D@76847" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76848" to="Map/@Area2D@76848" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76848" to="Map/@Area2D@76848" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76849" to="Map/@Area2D@76849" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76849" to="Map/@Area2D@76849" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76850" to="Map/@Area2D@76850" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76850" to="Map/@Area2D@76850" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76851" to="Map/@Area2D@76851" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76851" to="Map/@Area2D@76851" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76852" to="Map/@Area2D@76852" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76852" to="Map/@Area2D@76852" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/ZipLine" to="Map/ZipLine" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/ZipLine" to="Map/ZipLine" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76853" to="Map/@Area2D@76853" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76853" to="Map/@Area2D@76853" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76854" to="Map/@Area2D@76854" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76854" to="Map/@Area2D@76854" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76855" to="Map/@Area2D@76855" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76855" to="Map/@Area2D@76855" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76856" to="Map/@Area2D@76856" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76856" to="Map/@Area2D@76856" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76857" to="Map/@Area2D@76857" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76857" to="Map/@Area2D@76857" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76860" to="Map/@Area2D@76860" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76860" to="Map/@Area2D@76860" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76862" to="Map/@Area2D@76862" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76862" to="Map/@Area2D@76862" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76863" to="Map/@Area2D@76863" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76863" to="Map/@Area2D@76863" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76864" to="Map/@Area2D@76864" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76864" to="Map/@Area2D@76864" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76906" to="Map/@Area2D@76906" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76906" to="Map/@Area2D@76906" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76907" to="Map/@Area2D@76907" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76907" to="Map/@Area2D@76907" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76908" to="Map/@Area2D@76908" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76908" to="Map/@Area2D@76908" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76909" to="Map/@Area2D@76909" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76909" to="Map/@Area2D@76909" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76910" to="Map/@Area2D@76910" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76910" to="Map/@Area2D@76910" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@76911" to="Map/@Area2D@76911" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@76911" to="Map/@Area2D@76911" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/Bar" to="Map/Bar" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/Bar" to="Map/Bar" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@98535" to="Map/@Area2D@98535" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@98535" to="Map/@Area2D@98535" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@98536" to="Map/@Area2D@98536" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@98536" to="Map/@Area2D@98536" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@98537" to="Map/@Area2D@98537" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@98537" to="Map/@Area2D@98537" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@105546" to="Map/@Area2D@105546" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@105546" to="Map/@Area2D@105546" method="_on_area_exited"]
+[connection signal="area_entered" from="Map/@Area2D@108176" to="Map/@Area2D@108176" method="_on_area_entered"]
+[connection signal="area_exited" from="Map/@Area2D@108176" to="Map/@Area2D@108176" method="_on_area_exited"]

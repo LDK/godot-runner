@@ -255,6 +255,9 @@ size = Vector2(6, 1.5)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4l21p"]
 size = Vector2(11, 4)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nkqlm"]
+size = Vector2(16, 2)
+
 [node name="Hero" type="CharacterBody2D" unique_id=702208146]
 texture_filter = 1
 script = ExtResource("1_u1ipw")
@@ -308,5 +311,14 @@ script = ExtResource("4_xpv8o")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ClimbZone" unique_id=1823522647]
 position = Vector2(0.5, -2)
 shape = SubResource("RectangleShape2D_4l21p")
+
+[node name="StuckBox" type="StaticBody2D" parent="." unique_id=1344947791]
+z_index = 1
+position = Vector2(0, -8)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StuckBox" unique_id=1688120391]
+shape = SubResource("RectangleShape2D_nkqlm")
+disabled = true
+debug_color = Color(0.9762555, 0, 0.40962628, 0.8156863)
 
 [connection signal="area_entered" from="ClimbZone" to="." method="_on_climb_zone_area_entered"]
