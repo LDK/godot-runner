@@ -71,6 +71,8 @@ func build_entity_list() -> Dictionary:
 
 	for platform in platforms:
 		if platform.has('unwalkable'):
+			print("unwalkable platform:")
+			print(platform)
 			continue
 		var entity: Dictionary = create_entity('platform', platform)
 		entities[entity.id] = entity

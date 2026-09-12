@@ -106,7 +106,7 @@ func game_plan() -> void:
 		var my_path = map.find_shortest_path(area.entity_id, target_area.entity_id)
 		#print("my path: ", my_path)
 
-		if my_path.size() > 1:
+		if my_path.size() > 1 and map.entities.has(my_path[1]):
 			if my_path.size() > 2:
 				dest_after_next = map.entities[my_path[2]].def if map.entities.has(my_path[2]) else null
 			else:
@@ -381,6 +381,10 @@ func get_drop_x(bar: Dictionary, dest: Dictionary) -> int:
 	return dx
 
 func get_drop_xy(zipline: Dictionary, dest: Dictionary) -> Variant:
+	if !zipline or !dest or zipline.type != 'zipline':
+		print("Something wrong: ", zipline, dest)
+		return null
+
 	var candidates: Array[Vector2i] = []
 	var dxy: Variant = null
 

@@ -26,8 +26,8 @@ func add_bar_zones(bar: Dictionary) -> void:
 	var endXGlobal = get_cell_center_global(Vector2i(bar.endX, 0))
 	var YGlobal = get_cell_center_global(Vector2i(0, bar.y)).y
 
-	left_instance.position = Vector2(startXGlobal.x - 17, YGlobal)
-	right_instance.position = Vector2(endXGlobal.x + 17, YGlobal)
+	left_instance.position = Vector2(startXGlobal.x - 19, YGlobal)
+	right_instance.position = Vector2(endXGlobal.x + 19, YGlobal)
 
 	call_deferred("add_child", left_instance)
 	call_deferred("add_child", right_instance)
