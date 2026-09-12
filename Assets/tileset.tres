@@ -3,11 +3,14 @@
 [ext_resource type="Texture2D" uid="uid://dg3mnm3ieg82l" path="res://Assets/NES - Lode Runner - Miscellaneous - Tileset.png" id="1_hobn4"]
 [ext_resource type="PackedScene" uid="uid://cdosdwkeoory" path="res://Elements/Brick/brick.tscn" id="2_mjrc7"]
 [ext_resource type="PackedScene" uid="uid://c1xq0mu7tjoja" path="res://Elements/Block/block.tscn" id="3_7y6if"]
+[ext_resource type="PackedScene" uid="uid://dvpnrbrv1vae1" path="res://Elements/Spikes/spikes.tscn" id="3_iyyun"]
 [ext_resource type="PackedScene" uid="uid://dqlribbnm08oy" path="res://Elements/Ladder/ladder.tscn" id="4_k61v0"]
 [ext_resource type="PackedScene" uid="uid://pqw42tlynrdq" path="res://Elements/Bar/bar.tscn" id="5_0gax6"]
 [ext_resource type="PackedScene" uid="uid://df6i1yea8ptj7" path="res://Elements/GoldBrick/gold_brick.tscn" id="6_7nyp1"]
 [ext_resource type="PackedScene" uid="uid://dbi88ry22pgcr" path="res://Elements/TurtleSkin/turtle_skin.tscn" id="7_u67j7"]
 [ext_resource type="PackedScene" uid="uid://2p4rfelid7ej" path="res://Elements/GoldLadder/gold_ladder.tscn" id="8_86ilk"]
+[ext_resource type="PackedScene" uid="uid://bcplylv5peibb" path="res://Elements/ZipLine/zip_line_left.tscn" id="9_ghufl"]
+[ext_resource type="PackedScene" uid="uid://43atig8kpe7t" path="res://Elements/ZipLine/zip_line_right.tscn" id="10_iyyun"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_j238v"]
 texture = ExtResource("1_hobn4")
@@ -63,6 +66,9 @@ scenes/4/scene = ExtResource("5_0gax6")
 scenes/5/scene = ExtResource("6_7nyp1")
 scenes/6/scene = ExtResource("7_u67j7")
 scenes/7/scene = ExtResource("8_86ilk")
+scenes/8/scene = ExtResource("9_ghufl")
+scenes/9/scene = ExtResource("10_iyyun")
+scenes/10/scene = ExtResource("3_iyyun")
 
 [resource]
 physics_layer_0/collision_layer = 1

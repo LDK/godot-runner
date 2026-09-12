@@ -4,7 +4,7 @@
 [ext_resource type="AudioStream" uid="uid://behpvyih3abel" path="res://Assets/Audio/you-win.mp3" id="2_n1ha7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qvrfq"]
-size = Vector2(16, 16)
+size = Vector2(16, 8)
 
 [node name="LadderTop" type="Area2D" unique_id=228704383]
 process_mode = 3
@@ -12,6 +12,7 @@ texture_filter = 1
 script = ExtResource("1_gaulj")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1604493289]
+position = Vector2(0, 4)
 shape = SubResource("RectangleShape2D_qvrfq")
 debug_color = Color(0.88566846, 0.0003047639, 0.8086112, 0.41960785)
 

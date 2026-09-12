@@ -64,7 +64,10 @@ var current_area: Variant = null:
 var state: RunnerState = RunnerState.GROUND:
 	set(value):
 		if value != state:
+			print("State changed from ", stateNames[state], " to ", stateNames[value])
 			state = value
+		else:
+			return
 
 		current_area = my_area()
 
@@ -75,6 +78,7 @@ var state: RunnerState = RunnerState.GROUND:
 		elif value == RunnerState.FALLING:
 			sprite.play("fall")
 		elif value == RunnerState.HANGING:
+			center_runner_vertically_on_cell()
 			if velocity.x:
 				sprite.play("hang_walk")
 			else:
@@ -85,6 +89,10 @@ var state: RunnerState = RunnerState.GROUND:
 			lives -= 1
 		elif value == RunnerState.FLUNG:
 			sprite.play("fall")
+		elif value == RunnerState.ZIPPING:
+			center_runner_vertically_on_cell()
+			sprite.play("hang_walk")
+
 
 		if value != RunnerState.GROUND:
 			zapping = false
@@ -186,6 +194,7 @@ func _ground_process() -> void:
 
 	if target_brick:
 		zapping = true
+		center_runner_horizontally_on_cell()
 		target_brick.zap()
 
 	## MOVEMENT ##
@@ -293,12 +302,40 @@ func _flung_process() -> void:
 		collision_box.disabled = false
 		state = RunnerState.FALLING
 
+func _zipping_process() -> void:
+	var just_started: bool = zipping_start and zipping_start == my_coords()
+	
+	if zipping_start and map.platform_at(zipping_start + Vector2i(0, 1)):
+		just_started = false
+
+	print("just started?", just_started, my_coords(), zipping_start)
+
+	if is_on_floor() and !just_started:
+		state = RunnerState.GROUND
+
+	if Input.is_action_pressed("ui_down"):
+		state = RunnerState.FALLING
+		on_zipline = false
+		ziplines_touched = []
+
+	var cell_id = map.get_cell_alternative_tile(my_coords())
+
+	if cell_id == -1:
+		return
+
+	var line_is_left: bool = (cell_id == 8)
+	var direction_x: float = (-1 if line_is_left else 1) * zip_horiz_offset
+
+	velocity.x = direction_x * zip_speed
+	velocity.y = zip_speed
+
+	if sprite.animation != 'hang_walk':
+		sprite.play('hang_walk')
+
 func clear_zap_highlights() -> void:
 	for zappable in zappable_bricks:
 		if zappable is Brick:
 			(zappable as Brick).highlight = false
-
-
 
 func _physics_process(delta: float) -> void:
 	if not (map and level):
@@ -321,8 +358,15 @@ func _physics_process(delta: float) -> void:
 		_hanging_process()
 	elif state == RunnerState.FLUNG:
 		_flung_process()
+	elif state == RunnerState.ZIPPING:
+		_zipping_process()
 
-	if top_of_ladder and velocity.y < 0:
+	if (
+		top_of_ladder 
+		and is_on_floor() 
+		and not (Input.is_action_pressed("ui_down")) 
+		and not (Input.is_action_pressed("ui_up"))
+	):
 		velocity.y = 0
 
 	if velocity.x != 0.0:
@@ -330,10 +374,35 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
-
 func _on_climb_zone_area_entered(area: Area2D) -> void:
-	if area is Bar:
+	if area is Bar and state != RunnerState.ZIPPING:
 		state = RunnerState.HANGING
+	elif area is ZipLine:
+		state = RunnerState.ZIPPING
 
 func on_collect_gold() -> void:
 	gold_collected.emit()
+
+func _on_set_map(map: LevelMap) -> void:
+	map.connect("zipline_entered", _on_zipline_entered)
+
+func _on_zipline_entered(tile: ZipLine, runner: Runner):
+	if runner == self and state != RunnerState.GROUND:
+		on_zipline = true
+		add_zipline(tile)
+
+		var zipline_coords := map.get_coords_from_global(tile.global_position)
+		var zipline = map.zipline_at(zipline_coords)
+
+		if !zipline:
+			return
+
+		zipping_start = zipline_coords
+		zipping_end = Vector2i(zipline.endX, zipline.endY)
+
+		if velocity.x != 0:
+			global_position.y = map.get_cell_center_global(zipping_start).y
+		if velocity.y != 0:
+			global_position.x = map.get_cell_center_global(zipping_start).x
+
+		state = RunnerState.ZIPPING

@@ -234,6 +234,7 @@ script = ExtResource("3_iifgy")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Foot" unique_id=368203318]
 position = Vector2(0, -4.25)
+scale = Vector2(1, 0.9988559)
 shape = SubResource("RectangleShape2D_qvrfq")
 
 [node name="ClimbZone" type="Area2D" parent="." unique_id=824430322]

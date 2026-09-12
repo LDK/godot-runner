@@ -19,6 +19,7 @@ var target: Hero
 const GOLD_SCENE = preload("res://Items/Gold/gold.tscn")
 
 var dropX: Variant = null
+var dropCoords: Variant = null
 var climbYGlobal: Variant = null
 var climbY: Variant = null:
 	set(value):
@@ -58,6 +59,7 @@ var next_dest: Variant = null:
 					if !entity:
 						return
 
+					# TODO: Reduce this using .exits?
 					if dest_after_next.type == 'ladder':
 						if entity.has('ladders') and dest_after_next.entity_id in entity.ladders:
 							choices.push_back(entity)
@@ -67,7 +69,10 @@ var next_dest: Variant = null:
 					elif dest_after_next.type == 'bar':
 						if entity.has('bars') and dest_after_next.entity_id in entity.bars:
 							choices.push_back(entity)
-					
+					elif dest_after_next.type == 'zipline':
+						if entity.has('ziplines') and dest_after_next.entity_id in entity.ziplines:
+							choices.push_back(entity)
+
 				if choices.size() > 1:
 					var closest: Dictionary
 
@@ -95,11 +100,13 @@ func game_plan() -> void:
 
 	var area = my_area()
 	var target_area = target.my_area()
+	print("target area: ", target_area)
 	
 	if (area and target_area) and (area.has('entity_id') and target_area.has('entity_id')):
 		var my_path = map.find_shortest_path(area.entity_id, target_area.entity_id)
+		#print("my path: ", my_path)
 
-		if my_path.size() > 1:
+		if my_path.size() > 1 and map.entities.has(my_path[1]):
 			if my_path.size() > 2:
 				dest_after_next = map.entities[my_path[2]].def if map.entities.has(my_path[2]) else null
 			else:
@@ -129,6 +136,8 @@ var state: RunnerState = RunnerState.GROUND:
 			dropX = null
 		if value != RunnerState.CLIMBING:
 			climbY = null
+		if value != RunnerState.ZIPPING:
+			dropCoords = null
 
 		if value == RunnerState.GROUND:
 			velocity.y = 0
@@ -138,6 +147,11 @@ var state: RunnerState = RunnerState.GROUND:
 			game_plan()
 		elif value == RunnerState.FALLING:
 			sprite.play("fall")
+		elif value == RunnerState.ZIPPING:
+			sprite.play("hang_walk")
+			center_runner_on_cell()
+			#print("calling gameplan")
+			game_plan()
 		elif value == RunnerState.HANGING:
 			if velocity.x:
 				sprite.play("hang_walk")
@@ -171,7 +185,7 @@ func climb_over() -> void:
 	state = RunnerState.GROUND
 	var tween := create_tween()
 	tween.tween_property(self, 'position:x', position.x + 4, CLIMBOUT_DURATION / 4)
-	
+
 func climb_out() -> void:
 	var tween := create_tween()
 	tween.tween_property(self, 'position:y', position.y - 16, CLIMBOUT_DURATION)
@@ -218,6 +232,7 @@ func dist_x(dest: Dictionary) -> int:
 	return abs(coords.x - x)
 
 func get_ground_direction_x(dest: Variant) -> float:
+	#print("dest!:", dest)
 	if !dest:
 		return 0.0
 
@@ -225,6 +240,8 @@ func get_ground_direction_x(dest: Variant) -> float:
 	var coords = my_coords()
 	var platform = my_area()
 	var hero_area = target.my_area()
+	
+	#print("my area: ", my_area())
 
 	if !platform:
 		#print("I AM NOWHERE")
@@ -282,8 +299,8 @@ func get_ground_direction_x(dest: Variant) -> float:
 		# Check both edges of the current platform for which will drop you on the proper target platform
 		var leftCoords = Vector2i(platform.startX - 1, platform.y)
 		var rightCoords = Vector2i(platform.endX + 1, platform.y)
-		var dropLeft = map.level_drops[leftCoords] if map.level_drops.has(leftCoords) else null
-		var dropRight = map.level_drops[rightCoords] if map.level_drops.has(rightCoords) else null
+		var dropLeft = map.find_drop_from(leftCoords)
+		var dropRight = map.find_drop_from(rightCoords)
 
 		# If the left side is valid
 		if dropLeft and dropLeft.entity_id == dest.entity_id:
@@ -319,6 +336,25 @@ func get_ground_direction_x(dest: Variant) -> float:
 		elif dest.x == coords.x:
 			global_position.x = map.map_to_local(coords).x
 
+	elif dest.type == 'zipline':
+		var dropLeft = map.find_drop_from(Vector2i(platform.startX - 1, platform.y - 1))
+		var dropRight = map.find_drop_from(Vector2i(platform.endX + 1, platform.y - 1))
+		
+		if dropLeft and dropLeft.entity_id == dest.entity_id:
+			direction = -1
+		elif dropRight and dropRight.entity_id == dest.entity_id:
+			direction = 1
+		else:
+			var ziplineLeft = map.zipline_at(Vector2i(platform.startX - 1, platform.y - 1))
+
+			if ziplineLeft and ziplineLeft.entity_id == dest.entity_id:
+				direction = -1
+			else:
+				var ziplineRight = map.zipline_at(Vector2i(platform.startX + 1, platform.y - 1))
+
+				if ziplineRight and ziplineRight.entity_id == dest.entity_id:
+					direction = 1
+
 	return direction
 
 func get_drop_x(bar: Dictionary, dest: Dictionary) -> int:
@@ -333,7 +369,9 @@ func get_drop_x(bar: Dictionary, dest: Dictionary) -> int:
 
 	var hero_coords = target.my_coords()
 
-	if bar.drops.has(hero_coords.x) and dest.entity_id == bar.drops[hero_coords.x]:
+	var canDropOnHero = bar.drops.has(hero_coords.x) and dest.entity_id == bar.drops[hero_coords.x]
+
+	if canDropOnHero:
 		dx = hero_coords.x
 	elif candidates.size() && hero_coords.x < candidates[0]:
 		dx = candidates[0]
@@ -342,6 +380,50 @@ func get_drop_x(bar: Dictionary, dest: Dictionary) -> int:
 	
 	return dx
 
+func get_drop_xy(zipline: Dictionary, dest: Dictionary) -> Variant:
+	if !zipline or !dest or zipline.type != 'zipline':
+		print("Something wrong: ", zipline, dest)
+		return null
+
+	var candidates: Array[Vector2i] = []
+	var dxy: Variant = null
+
+	for coords in zipline.drops:
+		if zipline.drops[coords] == dest.entity_id:
+			candidates.push_back(coords)
+
+	candidates.sort()
+	
+	var hero_coords = target.my_coords()
+	var canDropOnHero := false
+	var attackCell: Vector2i
+
+	if zipline.drops:
+		for cell in zipline.cells:
+			canDropOnHero = (
+				cell.x == hero_coords.x
+				and zipline.drops.has(hero_coords)
+				and dest.entity_id == zipline.drops[cell]
+			)
+
+			if canDropOnHero:
+				attackCell = cell
+
+		if attackCell:
+			dxy = attackCell
+		elif candidates.size() && hero_coords.x < candidates[0].x:
+			dxy = candidates[0]
+		elif candidates.size() && hero_coords.x > candidates[candidates.size() - 1].x:
+			dxy = candidates[candidates.size() - 1]
+		elif candidates.size():
+			dxy = candidates[0]
+
+	#if !dxy:
+		#print("No candidates? ", candidates)
+		#print("dest: ", dest)
+		#print("drops: ", zipline.drops)
+
+	return dxy
 
 func get_hanging_direction_x(dest: Variant) -> float:
 	if !dest and dropX == null:
@@ -360,7 +442,6 @@ func get_hanging_direction_x(dest: Variant) -> float:
 			game_plan()
 		else:
 			state = RunnerState.FALLING
-			#print(is_on_floor())
 			return 0.0
 
 	if dest.entity_id == bar.entity_id and hero_area and dest.entity_id != hero_area.entity_id:
@@ -368,20 +449,21 @@ func get_hanging_direction_x(dest: Variant) -> float:
 
 	if bar.type != 'bar':
 		if state == RunnerState.HANGING:
-			#print("fall2")
 			state = RunnerState.FALLING
 
-	var on_hero_platform: bool = dest.entity_id == bar.entity_id and bar.type == 'bar'
+	var on_hero_bar: bool = dest.entity_id == bar.entity_id and bar.type == 'bar'
 
 	if bar.has('drops'):
 		var dest_x = dropX if dropX else coords.x
-		
-		if dest_x < coords.x:
+
+		var globalDestX = map.get_cell_center_global(Vector2i(dest_x, 0)).x
+
+		if globalDestX < global_position.x:
 			direction = -1.0
-		elif dest_x > coords.x:
+		elif globalDestX > global_position.x:
 			direction = 1.0
 
-		if target and on_hero_platform:
+		if target and on_hero_bar:
 			direction = 1.0 if target.my_coords().x > coords.x else -1.0
 		elif target:
 			dropX = get_drop_x(bar, dest)
@@ -401,7 +483,6 @@ func _ground_process() -> void:
 	if direction:
 		velocity.x = direction * walk_speed
 		if is_on_wall():
-			#print("WALL")
 			global_position.y = map.get_cell_center_global(my_coords()).y
 			pass
 		if sprite.animation != 'walk':
@@ -411,21 +492,7 @@ func _ground_process() -> void:
 		if sprite.animation != 'idle' and velocity.x == 0:
 			sprite.animation = 'idle'
 
-	## LADDER INTERACTION ##
-	#if on_ladder:
-		#pass
-		#var vert := Input.get_axis("ui_up", "ui_down")
-#
-		#if vert:
-			#if not (top_of_ladder and (vert < 0.0 or velocity.x != 0)):
-				#if not (bottom_of_ladder and vert > 0.0):
-					#state = RunnerState.CLIMBING
-					#global_position.x = ladders_touched[0].global_position.x
-					#print("bottom of ladder? ", bottom_of_ladder, " ", vert)
-
-	## TRANSITION TO FALLING ##
-	if !is_on_floor() and !on_ladder and !on_bar:
-		#print("fall4")
+	if !is_on_floor() and !on_ladder and !on_bar and !on_zipline:
 		state = RunnerState.FALLING
 
 func _falling_process(delta: float) -> void:
@@ -439,8 +506,49 @@ func _falling_process(delta: float) -> void:
 	if on_bar and !is_on_floor():
 		state = RunnerState.HANGING
 
+	if on_zipline and !is_on_floor():
+		state = RunnerState.ZIPPING
+
 	elif is_on_floor() or on_ladder:
 		state = RunnerState.GROUND
+
+func _zipping_process() -> void:
+	if is_on_floor():
+		state = RunnerState.GROUND
+		return
+
+	var coords = my_coords()
+
+	if coords == dropCoords:
+		print("I should drop!!", my_area(), next_dest)
+		state = RunnerState.FALLING
+		on_zipline = false
+
+	var zipline = my_area()
+
+	if !zipline:
+		return
+
+	if zipline.has('drops'):
+		#print("Waiting for ", dropCoords)
+
+		if target:
+			dropCoords = get_drop_xy(zipline, next_dest)
+			#print("dropCoords: ", dropCoords, zipline.entity_id, ', ', next_dest.entity_id)
+
+	var cell_id = map.get_cell_alternative_tile(my_coords())
+
+	if cell_id == -1:
+		return
+
+	var line_is_left: bool = (cell_id == 8)
+	var direction_x: float = (-1 if line_is_left else 1) * zip_horiz_offset
+
+	velocity.x = direction_x * zip_speed
+	velocity.y = zip_speed
+
+	if sprite.animation != 'hang_walk':
+		sprite.play('hang_walk')
 
 func get_climbing_direction_x(coords: Vector2i, ladder: Variant) -> float:
 	if !next_dest or !ladder or ladder.type != 'ladder':
@@ -577,6 +685,8 @@ func _climbing_process() -> void:
 	var coords = my_coords()
 
 	if !ladder or ladder.type != 'ladder':
+		if ladder.type == 'bar':
+			state = RunnerState.HANGING
 		return
 
 	var vert := get_climbing_direction_y(coords, ladder)
@@ -618,11 +728,15 @@ func _hanging_process() -> void:
 	velocity.y = 0
 
 	# When climbing on a bar, vertically center the enemy within the grid square
-	global_position.y = map.get_cell_center_global(my_coords()).y
+	var cell_coords = map.get_cell_center_global(my_coords())
+	global_position.y = cell_coords.y
 
 	if dropX:
 		var coords = my_coords()
-		if coords.x == dropX:
+		var globalDropX = map.get_cell_center_global(Vector2i(dropX, 0)).x
+		
+		if abs(global_position.x - globalDropX) < 1.0:
+			center_runner_on_cell()
 			state = RunnerState.FALLING
 			on_bar = false
 			return
@@ -655,6 +769,8 @@ func _physics_process(delta: float) -> void:
 		_climbing_process()
 	elif state == RunnerState.HANGING:
 		_hanging_process()
+	elif state == RunnerState.ZIPPING:
+		_zipping_process()
 
 	if top_of_ladder and velocity.y < 0:
 		velocity.y = 0
@@ -671,6 +787,9 @@ func _on_climb_zone_area_entered(area: Area2D) -> void:
 	if area is Bar and next_dest and next_dest.type == 'bar':
 		state = RunnerState.HANGING
 		on_bar = true
+	if area is ZipLine and next_dest and next_dest.type == 'zipline':
+		state = RunnerState.ZIPPING
+		on_zipline = true
 
 func _on_foot_area_entered(area: Area2D) -> void:
 	if area.name == 'Caught':

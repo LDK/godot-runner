@@ -1,14 +1,16 @@
 extends CharacterBody2D
 class_name Runner
 
-enum RunnerState { GROUND, HANGING, FALLING, CLIMBING, STUCK, DEAD, RECOVERING, RESPAWNING, FLUNG }
-var stateNames:Array[String] = ['Ground', 'Hanging', 'Falling', 'Climbing', 'Stuck', 'Dead', 'Recovering', 'Respawning']
+enum RunnerState { GROUND, HANGING, FALLING, CLIMBING, STUCK, DEAD, RECOVERING, RESPAWNING, FLUNG, ZIPPING }
+var stateNames:Array[String] = ['Ground', 'Hanging', 'Falling', 'Climbing', 'Stuck', 'Dead', 'Recovering', 'Respawning', 'Flung', 'Zipping']
 
 @onready var sprite:AnimatedSprite2D = $AnimatedSprite2D
 @onready var collision_box:CollisionShape2D = $CollisionShape2D
 
 @export var walk_speed: float = 125.0
 @export var climb_speed: float = 110.0
+@export var zip_speed: float = 70.0
+var zip_horiz_offset: float = 0.9
 
 var level: Level:
 	set(value):
@@ -17,7 +19,23 @@ var level: Level:
 			if level.map:
 				map = level.map
 
-var map: LevelMap
+var map: LevelMap:
+	set(value):
+		if value != map:
+			map = value
+			_on_set_map(map)
+
+func center_runner_on_cell() -> void:
+	var coords := my_coords()
+	global_position = map.get_cell_center_global(coords)
+
+func center_runner_vertically_on_cell() -> void:
+	var coords := my_coords()
+	global_position.y = map.get_cell_center_global(coords).y
+
+func center_runner_horizontally_on_cell() -> void:
+	var coords := my_coords()
+	global_position.x = map.get_cell_center_global(coords).x
 
 func _ready() -> void:
 	await get_parent().ready
@@ -38,6 +56,7 @@ func my_coords() -> Vector2i:
 	
 	return cell_coords
 
+#TODO: This function is ugly and stank. Clean it up.
 func my_area() -> Variant:
 	var cell_coords = my_coords()
 
@@ -100,7 +119,19 @@ func my_area() -> Variant:
 		# Check for where the runner will land.
 		if map.level_drops.has(cell_coords):
 			return map.level_drops[cell_coords]
-	
+
+	elif state == RunnerState.ZIPPING:
+		var z = map.zipline_at(cell_coords)
+		print("Z ", z, cell_coords)
+
+		if z:
+			return z
+
+	else:
+		var p = map.platform_at(Vector2i(cell_coords.x, cell_coords.y + 1))
+		if p:
+			return p
+
 	return map.entity_at(cell_coords) # This will take one last pass at finding something or return null
 
 func my_platform() -> Variant:
@@ -155,3 +186,27 @@ func _on_bars_changed():
 	var bar_count = bars_touched.size()
 	on_bar = bar_count > 0
 	
+## ZIPLINES ##
+
+var on_zipline := false
+var end_of_zipline := false
+var ziplines_touched: Array[ZipLine] = []
+
+var zipping_start: Variant = null
+var zipping_end: Variant = null
+
+func add_zipline(zipline: ZipLine) -> void:
+	ziplines_touched.push_front(zipline)
+	_on_ziplines_changed()
+
+func remove_zipline(zipline: ZipLine) -> void:
+	if ziplines_touched.has(zipline):
+		ziplines_touched.erase(zipline)
+	_on_ziplines_changed()
+
+func _on_ziplines_changed():
+	var zipline_count = ziplines_touched.size()
+	on_zipline = zipline_count > 0
+	
+func _on_set_map(_map: LevelMap) -> void:
+	pass

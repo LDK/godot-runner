@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://d0ods17n4uah3"]
+
+[ext_resource type="Script" uid="uid://xm78j8k0n780" path="res://Elements/ZipLine/zip_line_end.gd" id="1_06isr"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qvrfq"]
+size = Vector2(4, 4)
+
+[node name="ZipLineEnd" type="Area2D" unique_id=228704383]
+z_index = 2
+texture_filter = 1
+script = ExtResource("1_06isr")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1604493289]
+position = Vector2(21, 26)
+shape = SubResource("RectangleShape2D_qvrfq")
+debug_color = Color(0, 0.54617935, 0.9396143, 0.41960785)
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

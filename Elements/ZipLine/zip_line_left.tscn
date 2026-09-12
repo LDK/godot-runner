@@ -1,17 +1,17 @@
-[gd_scene format=3 uid="uid://pqw42tlynrdq"]
+[gd_scene format=3 uid="uid://bcplylv5peibb"]
 
-[ext_resource type="Script" uid="uid://dk6qlw2lydls1" path="res://Elements/Bar/bar.gd" id="1_sbg6f"]
-[ext_resource type="Texture2D" uid="uid://dylnikqh8vvxe" path="res://Assets/bars-lines.png" id="2_4vx5e"]
+[ext_resource type="Script" uid="uid://d1c6nlkt8ai1a" path="res://Elements/ZipLine/zip_line.gd" id="1_2f5rw"]
+[ext_resource type="Texture2D" uid="uid://dylnikqh8vvxe" path="res://Assets/bars-lines.png" id="2_baub7"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_g8naf"]
-atlas = ExtResource("2_4vx5e")
-region = Rect2(0, 0, 16, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_tt4ei"]
+atlas = ExtResource("2_baub7")
+region = Rect2(16, 0, 16, 16)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_qvrfq"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_g8naf")
+"texture": SubResource("AtlasTexture_tt4ei")
 }],
 "loop": 1,
 "name": &"default",
@@ -19,18 +19,22 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qvrfq"]
-size = Vector2(16, 1)
+size = Vector2(12.000002, 5.000001)
 
-[node name="Bar" type="Area2D" unique_id=228704383]
+[node name="ZipLine" type="Area2D" unique_id=228704383]
 texture_filter = 1
-script = ExtResource("1_sbg6f")
+script = ExtResource("1_2f5rw")
+is_left = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1923703022]
 sprite_frames = SubResource("SpriteFrames_qvrfq")
 autoplay = "default"
+flip_h = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1604493289]
-position = Vector2(0, -4.5)
+position = Vector2(-1.4999999, -3.0398564e-07)
+rotation = 1.5707964
+scale = Vector2(0.9999999, 0.9999999)
 shape = SubResource("RectangleShape2D_qvrfq")
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]
