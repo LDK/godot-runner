@@ -291,14 +291,17 @@ func _climbing_process() -> void:
 				.5
 				)
 	
-	var direction := get_direction_x()
+	if !vert:
+		var direction := get_direction_x()
 
-	if direction:
-		velocity.x = direction * walk_speed
-		if sprite.animation != 'climb':
-			sprite.play('climb')
+		if direction:
+			velocity.x = direction * walk_speed
+			if sprite.animation != 'climb':
+				sprite.play('climb')
+		else:
+			velocity.x = move_toward(velocity.x, 0, walk_speed)
 	else:
-		velocity.x = move_toward(velocity.x, 0, walk_speed)
+		velocity.x = 0
 		
 	if bottom_of_ladder and velocity.y >= 0:
 		state = RunnerState.GROUND
