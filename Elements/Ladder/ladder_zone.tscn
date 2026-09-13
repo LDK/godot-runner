@@ -1,12 +1,14 @@
 [gd_scene format=3 uid="uid://brlk7ou05xsr"]
 
-[ext_resource type="Script" uid="uid://wtnc24mpamni" path="res://Elements/NewLadder/ladder_zone.gd" id="1_vpfuv"]
+[ext_resource type="Script" uid="uid://wtnc24mpamni" path="res://Elements/Ladder/ladder_zone.gd" id="1_vpfuv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4l21p"]
 resource_local_to_scene = true
 size = Vector2(14, 16)
 
 [node name="LadderZone" type="Area2D" unique_id=621942294]
+collision_layer = 3
+collision_mask = 3
 script = ExtResource("1_vpfuv")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2074877851]

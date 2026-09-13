@@ -21,13 +21,12 @@ enum TileTypes {
 	ZipLineLeft = 8,
 	ZipLineRight = 9,
 	Spikes = 10,
-	NewLadder = 11
 }
 
-var tile_type_names := ['Empty', 'Brick', 'Block', 'Ladder', 'Bar', 'Gold Brick', 'Turtle Skin', 'Gold Ladder', 'Zipline Left', 'Zipline Right', 'Spikes', 'New Ladder']
+var tile_type_names := ['Empty', 'Brick', 'Block', 'Ladder', 'Bar', 'Gold Brick', 'Turtle Skin', 'Gold Ladder', 'Zipline Left', 'Zipline Right', 'Spikes']
 
-const PLATFORM_TILES = [TileTypes.Brick, TileTypes.Block, TileTypes.Ladder, TileTypes.GoldBrick, TileTypes.TurtleSkin]
-const LADDER_TILES = [TileTypes.Ladder, TileTypes.GoldLadder, TileTypes.NewLadder]
+const PLATFORM_TILES = [TileTypes.Brick, TileTypes.Block, TileTypes.Ladder, TileTypes.Ladder, TileTypes.GoldBrick, TileTypes.TurtleSkin]
+const LADDER_TILES = [TileTypes.Ladder, TileTypes.GoldLadder, TileTypes.Ladder]
 const ZIPLINE_TILES = [TileTypes.ZipLineLeft, TileTypes.ZipLineRight]
 
 @onready var used_cells: Array[Vector2i] = get_used_cells()

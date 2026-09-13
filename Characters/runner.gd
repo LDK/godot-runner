@@ -149,6 +149,8 @@ func my_platform() -> Variant:
 
 var on_ladder : Variant = null:
 	set(value):
+		print("value ", value)
+		print("on_ladder ", on_ladder)
 		if on_ladder != value:
 			on_ladder = value
 			print("on ladder: ", on_ladder)

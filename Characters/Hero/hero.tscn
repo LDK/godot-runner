@@ -86,8 +86,8 @@ region = Rect2(96, 16, 16, 16)
 atlas = ExtResource("2_xpv8o")
 region = Rect2(112, 16, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_mx85b"]
-atlas = ExtResource("2_xpv8o")
+[sub_resource type="AtlasTexture" id="AtlasTexture_8f4ik"]
+atlas = ExtResource("2_8f4ik")
 region = Rect2(16, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kkw4n"]
@@ -212,7 +212,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_mx85b")
+"texture": SubResource("AtlasTexture_8f4ik")
 }],
 "loop": 0,
 "name": &"idle",
@@ -270,9 +270,8 @@ climb_speed = 90.0
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=751552765]
 position = Vector2(0, -1)
 sprite_frames = SubResource("SpriteFrames_qvrfq")
-animation = &"walk"
+animation = &"idle"
 autoplay = "idle"
-frame = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1345373268]
 shape = SubResource("RectangleShape2D_8f4ik")

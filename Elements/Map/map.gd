@@ -130,9 +130,9 @@ func _ready() -> void:
 
 	findLandingSpots()
 
-	#print("ENTITIES:")
-	#for entity in entities:
-		#print(entities[entity])
+	print("ENTITIES:")
+	for entity in entities:
+		print(entities[entity])
 
 	#print("landing spots", level_drops)
 
@@ -195,6 +195,7 @@ func find_shortest_path(start_id: int, target_id: int) -> Array:
 				
 				# If we reached the target, return immediately
 				if neighbor_id == target_id:
+					#print("new path: ", new_path)
 					return new_path
 					
 				visited[neighbor_id] = true

@@ -9,14 +9,7 @@ func _on_area_entered(area: Area2D) -> void:
 	if area is RunnerClimbZone:
 		var runner = area.runner as Runner
 	
-		#print("zipline gp: ", global_position)
 		zipline_entered.emit(self, runner)
-
-		#if runner.state != Runner.RunnerState.GROUND:
-			#runner.on_zipline = true
-			#runner.add_zipline(self)
-			#runner.zipping_start = 
-			#runner.state = Runner.RunnerState.ZIPPING
 
 func _on_area_exited(area: Area2D) -> void:
 	if area is RunnerClimbZone:

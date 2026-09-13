@@ -450,10 +450,6 @@ func add_zipline_drop_lists() -> void:
 	for zipline in ziplines:
 		add_zipline_drop_list(zipline)
 
-		if zipline.has('drops'):
-			for coords in zipline.drops:
-				var dropEntity = entity_at(coords)
-
 func add_bar_drop_list(bar: Dictionary) -> void:
 	var x: int = bar.startX
 	var drops: Dictionary = {}

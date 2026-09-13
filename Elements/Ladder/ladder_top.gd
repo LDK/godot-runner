@@ -13,9 +13,8 @@ var entity_id: int
 @onready var lid_collision:CollisionShape2D = $Lid/CollisionShape2D
 
 func brief_pass_through() -> void:
-	print("bpt")
 	lid_collision.disabled = true
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(0.1).timeout
 	lid_collision.disabled = false
 	
 func _on_area_entered(area: Area2D) -> void:
@@ -39,6 +38,8 @@ func _on_area_exited(area: Area2D) -> void:
 		var runner = foot.runner
 		runner.top_of_ladder = false
 		runner.velocity.y = 0
+		
+		print ("UNTOP OF LADDER")
 
 		if entity_id and runner.above_ladder == entity_id:
 			runner.above_ladder = null

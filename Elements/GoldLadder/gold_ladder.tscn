@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://ca7sl1p1srade" path="res://Elements/GoldLadder/gold_ladder.gd" id="1_ok7n7"]
 [ext_resource type="Shader" uid="uid://bfewmh7uer4bl" path="res://Elements/GoldBrick/gold_brick.gdshader" id="2_1tou6"]
 [ext_resource type="Texture2D" uid="uid://dylnikqh8vvxe" path="res://Assets/bars-lines.png" id="3_1tou6"]
-[ext_resource type="Script" uid="uid://dgtl76vho5grb" path="res://Elements/Ladder/climb_zone.gd" id="3_ljua3"]
+[ext_resource type="Script" uid="uid://dgtl76vho5grb" path="res://Elements/OldLadder/climb_zone.gd" id="3_ljua3"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1tou6"]
 shader = ExtResource("2_1tou6")

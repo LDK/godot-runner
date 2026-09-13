@@ -4,9 +4,8 @@ class_name MapZoneAdder
 const ZIPLINE_RIGHT_END_SCENE = preload("res://Elements/ZipLine/zip_line_right_end.tscn")
 const ZIPLINE_LEFT_END_SCENE = preload("res://Elements/ZipLine/zip_line_left_end.tscn")
 
-const LADDER_ZONE_SCENE = preload("res://Elements/NewLadder/ladder_zone.tscn")
+const LADDER_ZONE_SCENE = preload("res://Elements/Ladder/ladder_zone.tscn")
 const LADDER_TOP_SCENE = preload("res://Elements/Ladder/ladder_top.tscn")
-const LADDER_BOTTOM_SCENE = preload("res://Elements/Ladder/ladder_bottom.tscn")
 
 const BAR_END_SCENE = preload("res://Elements/Bar/bar_end.tscn")
 
@@ -39,16 +38,13 @@ func add_ladder_zones(ladder: Dictionary) -> void:
 
 	var zone_instance:LadderZone = LADDER_ZONE_SCENE.instantiate() as LadderZone
 	var top_instance:LadderTop = LADDER_TOP_SCENE.instantiate() as LadderTop
-	#var bottom_instance:LadderBottom = LADDER_BOTTOM_SCENE.instantiate() as LadderBottom
-
+	
 	var golden: bool = (ladder.has('golden') and ladder.golden)
 	var hide_zones_on_gold: bool = (ladder.has('hide_zones_on_gold') and ladder.hide_zones_on_gold)
 
 	top_instance.golden = golden
-	#bottom_instance.golden = golden
 	top_instance.hide_on_gold = hide_zones_on_gold
-	#bottom_instance.hide_on_gold = hide_zones_on_gold
-
+	
 	var startYGlobal = get_cell_center_global(Vector2i(0, ladder.startY)).y
 	var endYGlobal = get_cell_center_global(Vector2i(0, ladder.endY)).y
 	var xGlobal = get_cell_center_global(Vector2i(ladder.x, ladder.endY)).x
@@ -56,7 +52,6 @@ func add_ladder_zones(ladder: Dictionary) -> void:
 	var zoneCenter := Vector2(xGlobal, ((endYGlobal + startYGlobal) / 2))
 
 	top_instance.position = Vector2(xGlobal, startYGlobal - 16)
-	#bottom_instance.position = Vector2(xGlobal, endYGlobal + 3)
 	zone_instance.position = zoneCenter + Vector2(0, .5)
 	
 	zone_instance.entity_id = ladder.entity_id
@@ -72,14 +67,11 @@ func add_ladder_zones(ladder: Dictionary) -> void:
 
 	call_deferred("add_child", zone_instance)
 	call_deferred("add_child", top_instance)
-	#call_deferred("add_child", bottom_instance)
-
+	
 	if golden:
 		await zone_instance.ready
 		zone_instance.collision_box.disabled = true
 		await top_instance.ready
 		top_instance.collision_box.disabled = true
-		#await bottom_instance.ready
-		#bottom_instance.collision_box.disabled = true
 	
 	top_instance.connect('player_wins', on_player_wins)

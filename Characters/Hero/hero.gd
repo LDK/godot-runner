@@ -143,7 +143,7 @@ func check_for_zap_block(zap: RayCast2D, zap_check: RayCast2D) -> bool:
 
 	if zap_check.is_colliding():
 		var object = zap_check.get_collider()
-		if object is LadderClimbZone:
+		if object is LadderZone:
 			blocked = true
 		if object is Collectible:
 			blocked = true
@@ -240,7 +240,7 @@ func _falling_process(delta: float) -> void:
 	velocity += (get_gravity() / 2) * delta
 	velocity.x = 0
 
-	if is_on_floor() or on_ladder:
+	if is_on_floor():
 		state = RunnerState.GROUND
 	
 	if on_bar:
@@ -261,11 +261,10 @@ func _climbing_process() -> void:
 		if velocity.y < 0.0 and top_of_ladder:
 			state = RunnerState.GROUND
 			velocity.y = 0
-			print("HERE")
 		elif velocity.y > 0.0 and top_of_ladder:
 			for ladder in map.ladders:
 				if ladder.entity_id == on_ladder:
-					var ladderTop: LadderTop
+					var ladderTop: Variant = null
 
 					for child in map.get_children():
 						if ladderTop:
@@ -273,23 +272,18 @@ func _climbing_process() -> void:
 #
 						if child is LadderTop and (child as LadderTop).entity_id == ladder.entity_id:
 							ladderTop = child as LadderTop
-							print("lz: ", ladderTop)
 							ladderTop.brief_pass_through()
 					
 
 		elif velocity.y > 0.0 and bottom_of_ladder:
 			state = RunnerState.GROUND
 
-		#center_runner_horizontally_on_cell()
 		if on_ladder:
-			print("on ladder: ", on_ladder)
-			print("entity: ", map.entities[on_ladder])
-			print("entity x: ", map.entities[on_ladder].def.x)
 			global_position.x = lerp(
 				global_position.x,
 				map.get_cell_center_global(Vector2i(map.entities[on_ladder].def.x, 0)).x,
 				.5
-				)
+			)
 	
 	if !vert:
 		var direction := get_direction_x()
@@ -427,8 +421,8 @@ func _on_climb_zone_area_entered(area: Area2D) -> void:
 func on_collect_gold() -> void:
 	gold_collected.emit()
 
-func _on_set_map(map: LevelMap) -> void:
-	map.connect("zipline_entered", _on_zipline_entered)
+func _on_set_map(levelMap: LevelMap) -> void:
+	levelMap.connect("zipline_entered", _on_zipline_entered)
 
 func _on_zipline_entered(tile: ZipLine, runner: Runner):
 	if runner == self and state != RunnerState.GROUND:
