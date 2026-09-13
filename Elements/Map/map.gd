@@ -165,7 +165,7 @@ func _ready() -> void:
 	#print(find_shortest_path(build_entity_list(), 8, 9))
 
 func find_shortest_path(start_id: int, target_id: int) -> Array:
-	print("from ", start_id, " to ", target_id)
+	#print("finding path from ", start_id, " to ", target_id)
 	var already_there = (start_id == target_id)
 	if already_there:
 		return [start_id]

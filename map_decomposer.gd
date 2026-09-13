@@ -37,10 +37,10 @@ func find_platforms() -> void:
 			if !foundPlatform:
 				foundPlatform = true
 				platformStart = cell_coords.x
-				if id in [3, 7]:
+				if id in LADDER_TILES:
 					allLadders = true
 			
-			if id not in [3, 7]:
+			if id not in LADDER_TILES:
 				allLadders= false
 
 		if foundPlatform and (id not in PLATFORM_TILES or idx == used_cells.size() - 1):
@@ -64,7 +64,7 @@ func find_platforms() -> void:
 			if segments.size() == 1:
 				if platformStart == platformEnd:
 					var cell_id = get_cell_alternative_tile(Vector2i(platformStart, y))
-					if cell_id in [3, 7]:
+					if cell_id in LADDER_TILES:
 						#print("that's also just a ladder piece", cell_coords)
 						pass
 					else:
@@ -356,7 +356,7 @@ func find_ladders() -> void:
 				golden = false
 				lid += 1
 			
-		if (id in [3, 7]): # Ladder
+		if (id in LADDER_TILES): # Ladder
 			if !foundLadder:
 				foundLadder = true
 				ladderStart = cell_coords.y

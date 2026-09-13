@@ -300,7 +300,6 @@ func find_zipline_landings() -> void:
 		elif landingEntity.type == 'ladder':
 			zipline.ladders.push_back(landingEntity.entity_id)
 		elif landingEntity.type == 'zipline':
-			print("from ", zipline.entity_id, " to ", landingEntity.entity_id)
 			zipline.ziplines.push_back(landingEntity.entity_id)
 
 func find_zipline_drop_locations(zipline: Dictionary) -> void:

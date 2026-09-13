@@ -214,6 +214,7 @@ size = Vector2(14, 15)
 
 [node name="Enemy" type="CharacterBody2D" unique_id=702208146]
 texture_filter = 1
+collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_iifgy")
 walk_speed = 75.0

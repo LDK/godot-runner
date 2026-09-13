@@ -100,7 +100,6 @@ func game_plan() -> void:
 
 	var area = my_area()
 	var target_area = target.my_area()
-	print("target area: ", target_area)
 	
 	if (area and target_area) and (area.has('entity_id') and target_area.has('entity_id')):
 		var my_path = map.find_shortest_path(area.entity_id, target_area.entity_id)
@@ -520,7 +519,7 @@ func _zipping_process() -> void:
 	var coords = my_coords()
 
 	if coords == dropCoords:
-		print("I should drop!!", my_area(), next_dest)
+		#print("I should drop!!", my_area(), next_dest)
 		state = RunnerState.FALLING
 		on_zipline = false
 

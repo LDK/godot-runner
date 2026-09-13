@@ -162,6 +162,12 @@ func highlight_zap_options() -> void:
 			(zappable as Brick).highlight = true	
 
 func _ground_process() -> void:
+	if above_ladder and not on_ladder and Input.is_action_pressed("ui_down"):
+		on_ladder = above_ladder
+		_climbing_process()
+		return
+
+	#center_runner_vertically_on_cell()
 	## ZAPPING ##
 	if zapping:
 		velocity = Vector2.ZERO
@@ -216,10 +222,11 @@ func _ground_process() -> void:
 		var vert := Input.get_axis("ui_up", "ui_down")
 
 		if vert:
-			if not (top_of_ladder and (vert < 0.0 or velocity.x != 0)):
-				if not (bottom_of_ladder and vert > 0.0):
-					state = RunnerState.CLIMBING
-					global_position.x = ladders_touched[0].global_position.x
+			if not (vert < 0.0 and top_of_ladder):
+				print("vert? ", vert)
+				state = RunnerState.CLIMBING
+				#center_runner_horizontally_on_cell()
+				#global_position.x = ladders_touched[0].global_position.x
 
 	## TRANSITION TO FALLING ##
 	elif !is_on_floor():
@@ -241,19 +248,48 @@ func _falling_process(delta: float) -> void:
 
 func _climbing_process() -> void:
 	velocity.y = 0
-	
-	if Input.is_action_pressed("ui_down"):
-		top_of_ladder = false
 
-	var vert := Input.get_axis("ui_up", "ui_down")
+	if on_ladder and is_on_floor() and not top_of_ladder and Input.is_action_pressed("ui_down"):
+		state = RunnerState.GROUND
+		_ground_process()
+		return
 	
-	if vert and ladders_touched.size():
+	var vert := Input.get_axis("ui_up", "ui_down")
+
+	if vert and on_ladder:
 		velocity.y = vert * climb_speed
 		if velocity.y < 0.0 and top_of_ladder:
 			state = RunnerState.GROUND
+			velocity.y = 0
+			print("HERE")
+		elif velocity.y > 0.0 and top_of_ladder:
+			for ladder in map.ladders:
+				if ladder.entity_id == on_ladder:
+					var ladderTop: LadderTop
+
+					for child in map.get_children():
+						if ladderTop:
+							continue
+#
+						if child is LadderTop and (child as LadderTop).entity_id == ladder.entity_id:
+							ladderTop = child as LadderTop
+							print("lz: ", ladderTop)
+							ladderTop.brief_pass_through()
+					
+
 		elif velocity.y > 0.0 and bottom_of_ladder:
 			state = RunnerState.GROUND
-		global_position.x = ladders_touched[0].global_position.x
+
+		#center_runner_horizontally_on_cell()
+		if on_ladder:
+			print("on ladder: ", on_ladder)
+			print("entity: ", map.entities[on_ladder])
+			print("entity x: ", map.entities[on_ladder].def.x)
+			global_position.x = lerp(
+				global_position.x,
+				map.get_cell_center_global(Vector2i(map.entities[on_ladder].def.x, 0)).x,
+				.5
+				)
 	
 	var direction := get_direction_x()
 
@@ -279,7 +315,7 @@ func _hanging_process() -> void:
 
 	if Input.is_action_pressed("ui_up"):
 		var coords = my_coords()
-		if map.get_cell_alternative_tile(Vector2i(coords.x, coords.y - 1)) in [3, 7]:
+		if map.get_cell_alternative_tile(Vector2i(coords.x, coords.y - 1)) in MapExtended.LADDER_TILES:
 			velocity.y = -1 * climb_speed
 			state = RunnerState.CLIMBING
 
@@ -340,6 +376,11 @@ func clear_zap_highlights() -> void:
 func _physics_process(delta: float) -> void:
 	if not (map and level):
 		return
+
+	#var area = my_area()
+#
+	#if area and area.entity_id:
+		#print("area: ", area.entity_id)
 
 	clear_zap_highlights()
 

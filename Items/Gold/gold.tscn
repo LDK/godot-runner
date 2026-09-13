@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bt3nwedppskco" path="res://Items/Gold/gold.gd" id="1_1p357"]
 [ext_resource type="Texture2D" uid="uid://dg3mnm3ieg82l" path="res://Assets/NES - Lode Runner - Miscellaneous - Tileset.png" id="1_1rp5q"]
+[ext_resource type="AudioStream" uid="uid://d1cibovtlev0w" path="res://Assets/Audio/gold.mp3" id="3_5q13b"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qvrfq"]
 size = Vector2(16, 12)
@@ -154,6 +155,7 @@ animations = [{
 
 [node name="Gold" type="Area2D" unique_id=1483243167]
 script = ExtResource("1_1p357")
+sound_on_collect = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=43972869]
 position = Vector2(0, 2)
@@ -163,5 +165,9 @@ shape = SubResource("RectangleShape2D_qvrfq")
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_qvrfq")
 frame_progress = 0.97115415
+
+[node name="CollectSound" type="AudioStreamPlayer" parent="." unique_id=1367262074]
+stream = ExtResource("3_5q13b")
+volume_db = -3.0
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

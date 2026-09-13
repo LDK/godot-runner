@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://c1xq0mu7tjoja" path="res://Elements/Block/block.tscn" id="3_7y6if"]
 [ext_resource type="PackedScene" uid="uid://dvpnrbrv1vae1" path="res://Elements/Spikes/spikes.tscn" id="3_iyyun"]
 [ext_resource type="PackedScene" uid="uid://dqlribbnm08oy" path="res://Elements/Ladder/ladder.tscn" id="4_k61v0"]
+[ext_resource type="PackedScene" uid="uid://brtneyyi3oepn" path="res://Elements/NewLadder/new_ladder.tscn" id="4_rayub"]
 [ext_resource type="PackedScene" uid="uid://pqw42tlynrdq" path="res://Elements/Bar/bar.tscn" id="5_0gax6"]
 [ext_resource type="PackedScene" uid="uid://df6i1yea8ptj7" path="res://Elements/GoldBrick/gold_brick.tscn" id="6_7nyp1"]
 [ext_resource type="PackedScene" uid="uid://dbi88ry22pgcr" path="res://Elements/TurtleSkin/turtle_skin.tscn" id="7_u67j7"]
@@ -69,6 +70,7 @@ scenes/7/scene = ExtResource("8_86ilk")
 scenes/8/scene = ExtResource("9_ghufl")
 scenes/9/scene = ExtResource("10_iyyun")
 scenes/10/scene = ExtResource("3_iyyun")
+scenes/11/scene = ExtResource("4_rayub")
 
 [resource]
 physics_layer_0/collision_layer = 1

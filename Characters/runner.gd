@@ -12,6 +12,8 @@ var stateNames:Array[String] = ['Ground', 'Hanging', 'Falling', 'Climbing', 'Stu
 @export var zip_speed: float = 70.0
 var zip_horiz_offset: float = 0.9
 
+const _ladder_snap_weight: float = 1.0
+
 var level: Level:
 	set(value):
 		if value != level:
@@ -145,11 +147,25 @@ func my_platform() -> Variant:
 
 ## LADDERS ##
 
-var on_ladder := false
+var on_ladder : Variant = null:
+	set(value):
+		if on_ladder != value:
+			on_ladder = value
+			print("on ladder: ", on_ladder)
+
+var above_ladder : Variant = null:
+	set(value):
+		if above_ladder != value:
+			above_ladder = value
+			print("above ladder: ", above_ladder)
+
 var top_of_ladder := false:
 	set(value):
 		if top_of_ladder != value:
 			top_of_ladder = value
+			
+			if value:
+				velocity.y = 0
 
 var bottom_of_ladder := false
 var ladders_touched: Array[Ladder] = []
