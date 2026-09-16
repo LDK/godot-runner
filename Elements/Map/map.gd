@@ -25,10 +25,8 @@ func sort_x_asc_y_asc(a:Vector2i, b:Vector2i) -> bool:
 
 func activate_golden_ladder() -> void:
 	for child in get_children():
-		if child is LadderBottom and child.golden:
+		if child is LadderZone and child.golden:
 			child.collision_box.disabled = false
-		elif child is LadderBottom and child.hide_on_gold:
-			child.collision_box.disabled = true
 		elif child is LadderTop and child.golden:
 			child.collision_box.disabled = false
 		elif child is LadderTop and child.hide_on_gold:

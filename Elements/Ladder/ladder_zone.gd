@@ -4,6 +4,7 @@ class_name LadderZone
 @onready var collision_box:CollisionShape2D = $CollisionShape2D
 
 var entity_id: int
+var golden: bool = false
 
 func _on_body_entered(body: Node2D) -> void:
 	if !entity_id:
@@ -13,9 +14,6 @@ func _on_body_entered(body: Node2D) -> void:
 	if body is Runner:
 		print("Hello")
 		(body as Runner).on_ladder = entity_id
-	else:
-		if entity_id == 8:
-			print("Other body: ", body.name)
 
 func _on_body_exited(body: Node2D) -> void:
 	if !entity_id:

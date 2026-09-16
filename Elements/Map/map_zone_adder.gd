@@ -39,7 +39,7 @@ func add_ladder_zones(ladder: Dictionary) -> void:
 	var zone_instance:LadderZone = LADDER_ZONE_SCENE.instantiate() as LadderZone
 	var top_instance:LadderTop = LADDER_TOP_SCENE.instantiate() as LadderTop
 	
-	var golden: bool = (ladder.has('golden') and ladder.golden)
+	var golden: bool = ladder.has('golden') and ladder.golden
 	var hide_zones_on_gold: bool = (ladder.has('hide_zones_on_gold') and ladder.hide_zones_on_gold)
 
 	top_instance.golden = golden
@@ -55,6 +55,7 @@ func add_ladder_zones(ladder: Dictionary) -> void:
 	zone_instance.position = zoneCenter + Vector2(0, .5)
 	
 	zone_instance.entity_id = ladder.entity_id
+	zone_instance.golden = golden
 	top_instance.entity_id = ladder.entity_id
 
 	var ladderLength: int = ladder.endY - ladder.startY + 1
@@ -63,7 +64,6 @@ func add_ladder_zones(ladder: Dictionary) -> void:
 
 	if zone_collision_box:
 		zone_collision_box.shape.size = Vector2(16, 16 * (ladderLength) + 1)
-		print("ladder collision box size: ", zone_collision_box.shape.size)
 
 	call_deferred("add_child", zone_instance)
 	call_deferred("add_child", top_instance)
