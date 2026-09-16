@@ -1,12 +1,15 @@
 extends Ladder
 class_name GoldLadder
-
+#
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 var level: Level:
 	set(value):
 		if value != level:
 			level = value
+
+
+		print("level: ", level)
 
 		if value:
 			(value as Level).connect("all_gold_collected", _on_level_gold_collected)
@@ -23,11 +26,9 @@ var active: bool = false:
 
 		if value:
 			sprite.visible = true
-			climb_zone.monitoring = true
+			#climb_zone.monitoring = true
 
 func _ready() -> void:
-	climb_zone.golden = true
-	climb_zone.monitoring = false
 	var parent = get_parent()
 	if parent is LevelMap:
 		map = parent

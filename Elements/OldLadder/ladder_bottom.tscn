@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://citfe7853oya1"]
 
-[ext_resource type="Script" uid="uid://bqfv1dhm5mrdp" path="res://Elements/Ladder/ladder_bottom.gd" id="1_iueq7"]
+[ext_resource type="Script" uid="uid://bqfv1dhm5mrdp" path="res://Elements/OldLadder/ladder_bottom.gd" id="1_iueq7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qvrfq"]
 size = Vector2(26, 3)

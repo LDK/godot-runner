@@ -32,7 +32,7 @@ func distribute_values(value) -> Array[float]:
 	var values: Array[float] = [0.0, 0.0, 0.0]
 
 	while i + 1 <= abs(round(value)):
-		values[i % NECK_LENGTH] += (1.0 * -1 if neg else 1)
+		values[i % NECK_LENGTH] += (1.0 * (-1 if neg else 1))
 
 		i += 1
 
@@ -148,7 +148,7 @@ func kill_tweens_on(obj: Object) -> void:
 		if tween.is_valid() and tween.is_bound_to(obj):
 			tween.kill()
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if shaking:
 		position.y = original_y + randf_range(-sell_intensity, sell_intensity)
 	else:

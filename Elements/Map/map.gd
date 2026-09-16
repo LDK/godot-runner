@@ -25,10 +25,8 @@ func sort_x_asc_y_asc(a:Vector2i, b:Vector2i) -> bool:
 
 func activate_golden_ladder() -> void:
 	for child in get_children():
-		if child is LadderBottom and child.golden:
+		if child is LadderZone and child.golden:
 			child.collision_box.disabled = false
-		elif child is LadderBottom and child.hide_on_gold:
-			child.collision_box.disabled = true
 		elif child is LadderTop and child.golden:
 			child.collision_box.disabled = false
 		elif child is LadderTop and child.hide_on_gold:
@@ -130,9 +128,9 @@ func _ready() -> void:
 
 	findLandingSpots()
 
-	#print("ENTITIES:")
-	#for entity in entities:
-		#print(entities[entity])
+	print("ENTITIES:")
+	for entity in entities:
+		print(entities[entity])
 
 	#print("landing spots", level_drops)
 
@@ -165,7 +163,7 @@ func _ready() -> void:
 	#print(find_shortest_path(build_entity_list(), 8, 9))
 
 func find_shortest_path(start_id: int, target_id: int) -> Array:
-	print("from ", start_id, " to ", target_id)
+	#print("finding path from ", start_id, " to ", target_id)
 	var already_there = (start_id == target_id)
 	if already_there:
 		return [start_id]
@@ -195,6 +193,7 @@ func find_shortest_path(start_id: int, target_id: int) -> Array:
 				
 				# If we reached the target, return immediately
 				if neighbor_id == target_id:
+					#print("new path: ", new_path)
 					return new_path
 					
 				visited[neighbor_id] = true

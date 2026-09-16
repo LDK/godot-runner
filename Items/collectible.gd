@@ -6,7 +6,7 @@ class_name Collectible
 @onready var particles = get_node_or_null("Particles")
 
 @export var sound_on_collect: bool = false
-@onready var sound:AudioStreamPlayer2D = get_node_or_null("CollectSound")
+@onready var collect_sound:AudioStreamPlayer = get_node_or_null("CollectSound")
 
 signal collected(collectible: Collectible, runner: Runner)
 
@@ -15,9 +15,9 @@ var is_collected := false:
 		is_collected = value
 		check_for_expiration()
 		
-var sound_finished := false:
+var collect_sound_finished := false:
 	set(value):
-		sound_finished = value
+		collect_sound_finished = value
 		check_for_expiration()
 		
 var particles_finished := false:
@@ -26,10 +26,10 @@ var particles_finished := false:
 		check_for_expiration()
 
 func _ready() -> void:
-	if sound_on_collect and sound and sound is AudioStreamPlayer2D:
-		sound.connect('finished', _on_sound_finished)
+	if sound_on_collect and collect_sound and collect_sound is AudioStreamPlayer:
+		collect_sound.connect('finished', _on_sound_finished)
 	else:
-		sound_finished = true
+		collect_sound_finished = true
 		
 	if particles_on_collect and particles and particles is CPUParticles2D:
 		particles.connect('finished', _on_particles_finished)
@@ -37,7 +37,7 @@ func _ready() -> void:
 		particles_finished = true
 		
 func check_for_expiration() -> void:
-	if particles_finished and sound_finished and is_collected:
+	if particles_finished and collect_sound_finished and is_collected:
 		queue_free()
 
 func _on_body_entered(body: Node2D) -> void:
@@ -54,8 +54,8 @@ func _on_body_entered(body: Node2D) -> void:
 
 	sprite.hide()
 
-	if sound_on_collect and sound and sound is AudioStreamPlayer2D:
-		sound.play()
+	if sound_on_collect and collect_sound and collect_sound is AudioStreamPlayer:
+		collect_sound.play()
 
 	if particles_on_collect and particles and particles is CPUParticles2D:
 		particles.restart()
@@ -65,7 +65,7 @@ func _on_particles_finished() -> void:
 	particles_finished = true
 
 func _on_sound_finished() -> void:
-	sound_finished = true
+	collect_sound_finished = true
 
 # Placeholder for specific Collectibles to have their own callback function
 func _on_collect(_runner: Runner) -> void:

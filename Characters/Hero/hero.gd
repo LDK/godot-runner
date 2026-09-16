@@ -143,7 +143,7 @@ func check_for_zap_block(zap: RayCast2D, zap_check: RayCast2D) -> bool:
 
 	if zap_check.is_colliding():
 		var object = zap_check.get_collider()
-		if object is LadderClimbZone:
+		if object is LadderZone:
 			blocked = true
 		if object is Collectible:
 			blocked = true
@@ -162,6 +162,12 @@ func highlight_zap_options() -> void:
 			(zappable as Brick).highlight = true	
 
 func _ground_process() -> void:
+	if above_ladder and not on_ladder and Input.is_action_pressed("ui_down"):
+		on_ladder = above_ladder
+		_climbing_process()
+		return
+
+	#center_runner_vertically_on_cell()
 	## ZAPPING ##
 	if zapping:
 		velocity = Vector2.ZERO
@@ -216,10 +222,11 @@ func _ground_process() -> void:
 		var vert := Input.get_axis("ui_up", "ui_down")
 
 		if vert:
-			if not (top_of_ladder and (vert < 0.0 or velocity.x != 0)):
-				if not (bottom_of_ladder and vert > 0.0):
-					state = RunnerState.CLIMBING
-					global_position.x = ladders_touched[0].global_position.x
+			if not (vert < 0.0 and top_of_ladder):
+				print("vert? ", vert)
+				state = RunnerState.CLIMBING
+				#center_runner_horizontally_on_cell()
+				#global_position.x = ladders_touched[0].global_position.x
 
 	## TRANSITION TO FALLING ##
 	elif !is_on_floor():
@@ -233,7 +240,7 @@ func _falling_process(delta: float) -> void:
 	velocity += (get_gravity() / 2) * delta
 	velocity.x = 0
 
-	if is_on_floor() or on_ladder:
+	if is_on_floor():
 		state = RunnerState.GROUND
 	
 	if on_bar:
@@ -241,28 +248,54 @@ func _falling_process(delta: float) -> void:
 
 func _climbing_process() -> void:
 	velocity.y = 0
-	
-	if Input.is_action_pressed("ui_down"):
-		top_of_ladder = false
 
-	var vert := Input.get_axis("ui_up", "ui_down")
+	if on_ladder and is_on_floor() and not top_of_ladder and Input.is_action_pressed("ui_down"):
+		state = RunnerState.GROUND
+		_ground_process()
+		return
 	
-	if vert and ladders_touched.size():
+	var vert := Input.get_axis("ui_up", "ui_down")
+
+	if vert and on_ladder:
 		velocity.y = vert * climb_speed
 		if velocity.y < 0.0 and top_of_ladder:
 			state = RunnerState.GROUND
+			velocity.y = 0
+		elif velocity.y > 0.0 and top_of_ladder:
+			for ladder in map.ladders:
+				if ladder.entity_id == on_ladder:
+					var ladderTop: Variant = null
+
+					for child in map.get_children():
+						if ladderTop:
+							continue
+#
+						if child is LadderTop and (child as LadderTop).entity_id == ladder.entity_id:
+							ladderTop = child as LadderTop
+							ladderTop.brief_pass_through()
+					
+
 		elif velocity.y > 0.0 and bottom_of_ladder:
 			state = RunnerState.GROUND
-		global_position.x = ladders_touched[0].global_position.x
-	
-	var direction := get_direction_x()
 
-	if direction:
-		velocity.x = direction * walk_speed
-		if sprite.animation != 'climb':
-			sprite.play('climb')
+		if on_ladder:
+			global_position.x = lerp(
+				global_position.x,
+				map.get_cell_center_global(Vector2i(map.entities[on_ladder].def.x, 0)).x,
+				.5
+			)
+	
+	if !vert:
+		var direction := get_direction_x()
+
+		if direction:
+			velocity.x = direction * walk_speed
+			if sprite.animation != 'climb':
+				sprite.play('climb')
+		else:
+			velocity.x = move_toward(velocity.x, 0, walk_speed)
 	else:
-		velocity.x = move_toward(velocity.x, 0, walk_speed)
+		velocity.x = 0
 		
 	if bottom_of_ladder and velocity.y >= 0:
 		state = RunnerState.GROUND
@@ -279,7 +312,7 @@ func _hanging_process() -> void:
 
 	if Input.is_action_pressed("ui_up"):
 		var coords = my_coords()
-		if map.get_cell_alternative_tile(Vector2i(coords.x, coords.y - 1)) in [3, 7]:
+		if map.get_cell_alternative_tile(Vector2i(coords.x, coords.y - 1)) in MapExtended.LADDER_TILES:
 			velocity.y = -1 * climb_speed
 			state = RunnerState.CLIMBING
 
@@ -341,6 +374,11 @@ func _physics_process(delta: float) -> void:
 	if not (map and level):
 		return
 
+	#var area = my_area()
+#
+	#if area and area.entity_id:
+		#print("area: ", area.entity_id)
+
 	clear_zap_highlights()
 
 	if state == RunnerState.DEAD:
@@ -383,8 +421,8 @@ func _on_climb_zone_area_entered(area: Area2D) -> void:
 func on_collect_gold() -> void:
 	gold_collected.emit()
 
-func _on_set_map(map: LevelMap) -> void:
-	map.connect("zipline_entered", _on_zipline_entered)
+func _on_set_map(levelMap: LevelMap) -> void:
+	levelMap.connect("zipline_entered", _on_zipline_entered)
 
 func _on_zipline_entered(tile: ZipLine, runner: Runner):
 	if runner == self and state != RunnerState.GROUND:

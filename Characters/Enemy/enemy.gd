@@ -100,7 +100,6 @@ func game_plan() -> void:
 
 	var area = my_area()
 	var target_area = target.my_area()
-	print("target area: ", target_area)
 	
 	if (area and target_area) and (area.has('entity_id') and target_area.has('entity_id')):
 		var my_path = map.find_shortest_path(area.entity_id, target_area.entity_id)
@@ -330,11 +329,21 @@ func get_ground_direction_x(dest: Variant) -> float:
 			direction = -1.0
 		elif dest.x > coords.x:
 			direction = 1.0
-		elif dest.x == coords.x and ladders_touched.size():
+		elif dest.x == coords.x and on_ladder:
 			state = RunnerState.CLIMBING
-			global_position.x = ladders_touched[0].global_position.x
 		elif dest.x == coords.x:
-			global_position.x = map.map_to_local(coords).x
+			var centerX := map.map_to_local(coords).x
+
+			print(centerX, " - ", global_position.x)
+
+			if abs(centerX - global_position.x) < 0.1:
+				direction = 0.0
+			else:
+				if centerX < global_position.x:
+					direction = -1.0
+				else:
+					direction = 1.0
+			print("on ladder? ", on_ladder, " top of ladder? ", top_of_ladder)
 
 	elif dest.type == 'zipline':
 		var dropLeft = map.find_drop_from(Vector2i(platform.startX - 1, platform.y - 1))
@@ -477,6 +486,12 @@ func get_hanging_direction_x(dest: Variant) -> float:
 	return direction
 
 func _ground_process() -> void:
+	if above_ladder and not on_ladder and next_dest and next_dest.type == 'ladder':
+		on_ladder = above_ladder
+		state = RunnerState.CLIMBING
+		_climbing_process()
+		return
+
 	## MOVEMENT ##
 	var direction := get_ground_direction_x(next_dest)
 
@@ -510,6 +525,7 @@ func _falling_process(delta: float) -> void:
 		state = RunnerState.ZIPPING
 
 	elif is_on_floor() or on_ladder:
+		print("nah")
 		state = RunnerState.GROUND
 
 func _zipping_process() -> void:
@@ -520,7 +536,7 @@ func _zipping_process() -> void:
 	var coords = my_coords()
 
 	if coords == dropCoords:
-		print("I should drop!!", my_area(), next_dest)
+		#print("I should drop!!", my_area(), next_dest)
 		state = RunnerState.FALLING
 		on_zipline = false
 
@@ -568,7 +584,7 @@ func get_climbing_direction_x(coords: Vector2i, ladder: Variant) -> float:
 				# platform and is thus considered part of the platform horizontally
 				# while running both above and below it vertically
 				if abs(global_position.y - center_y) < 3:
-					if tile_below in [3,7]:
+					if tile_below in map.LADDER_TILES:
 						global_position.y = center_y
 						# short-term placeholder value, definitely
 						# replace with more complex logic.
@@ -613,14 +629,17 @@ func get_climbing_direction_x(coords: Vector2i, ladder: Variant) -> float:
 
 func get_climbing_direction_y(coords: Vector2i, ladder: Variant) -> float:
 	if !next_dest:
+		print("no next dest")
 		return 0.0
 	
 	var direction: float = 0.0
 	
 	if coords == null:
+		print("no coords")
 		return 0.0
 	
 	if !ladder:
+		print("no ladder")
 		return 0.0
 
 	if next_dest.type == 'platform' and next_dest.y <= coords.y:
@@ -634,16 +653,6 @@ func get_climbing_direction_y(coords: Vector2i, ladder: Variant) -> float:
 		direction = 1.0 if target.my_coords().y > coords.y else -1.0
 		climbY = target.my_coords().y
 	
-	#print("ladder", ladder)
-	#print("next dest", next_dest)
-	#print("coords", coords)
-	#print("climbY", climbY)
-	#print("climbY global", climbYGlobal)
-	#print("my area: ", my_area())
-	#print("TOL? ", top_of_ladder)
-	#print("global y: ", global_position.y)
-	#print("my coords global y:", map.get_cell_center_global(coords).y)
-
 	var area = my_area()
 
 	if top_of_ladder and area.type == 'ladder':
@@ -667,63 +676,75 @@ func get_climbing_direction_y(coords: Vector2i, ladder: Variant) -> float:
 func _climbing_process() -> void:
 	velocity.y = 0
 
-	if climbY != null:
-		top_of_ladder = false
-
 	var area = my_area()
-
-	if top_of_ladder and next_dest and next_dest.type == 'platform' and area and area.entity_id == next_dest.entity_id:
-		state = RunnerState.GROUND
-		return
-
-	if !ladders_touched.size():
-		state = RunnerState.GROUND
-		climbY = null
-		return
-
-	var ladder = my_area()
 	var coords = my_coords()
 
-	if !ladder or ladder.type != 'ladder':
-		if ladder.type == 'bar':
-			state = RunnerState.HANGING
+	var vert := get_climbing_direction_y(coords, area)
+
+	if on_ladder and is_on_floor() and not vert:
+		print("hi")
+		state = RunnerState.GROUND
+		_ground_process()
 		return
 
-	var vert := get_climbing_direction_y(coords, ladder)
-
-	if vert:
-		if sprite.animation != 'climb':
-			sprite.play('climb')
-
+	if vert and on_ladder:
 		velocity.y = vert * climb_speed
 		if velocity.y < 0.0 and top_of_ladder:
 			state = RunnerState.GROUND
-		elif velocity.y > 0.0 and bottom_of_ladder:
+			velocity.y = 0
+		elif velocity.y > 0.0 and top_of_ladder:
+			for ladder in map.ladders:
+				if ladder.entity_id == on_ladder:
+					var ladderTop: Variant = null
+
+					for child in map.get_children():
+						if ladderTop:
+							continue
+#
+						if child is LadderTop and (child as LadderTop).entity_id == ladder.entity_id:
+							ladderTop = child as LadderTop
+							ladderTop.brief_pass_through()
+							print("state ", stateNames[state])
+
+		elif velocity.y > 0.0 and is_on_floor:
 			state = RunnerState.GROUND
+
+		if on_ladder:
+			global_position.x = lerp(
+				global_position.x,
+				map.get_cell_center_global(Vector2i(map.entities[on_ladder].def.x, 0)).x,
+				.5
+			)
+
+	var direction: float = 0.0
+
+	if !vert:
+		direction = get_climbing_direction_x(coords, area)
+
+		if direction:
+			velocity.x = direction * walk_speed
+		else:
+			velocity.x = move_toward(velocity.x, 0, walk_speed)
+	else:
+		velocity.x = 0
+
+	if vert or direction:
+		if sprite.animation != 'climb':
+			sprite.play('climb')
 	else:
 		if sprite.animation != 'climb_idle':
 			sprite.play('climb_idle')
 
-	var direction := get_climbing_direction_x(coords, ladder)
 
-	if direction:
-		velocity.y = 0
-		velocity.x = direction * walk_speed
-		if sprite.animation != 'climb':
-			sprite.play('climb')
-	else:
-		velocity.x = move_toward(velocity.x, 0, walk_speed)
-
-	if vert and !direction:
-		global_position.x = ladders_touched[0].global_position.x
-
-
-	if bottom_of_ladder and velocity.y >= 0 and next_dest and next_dest.type == 'platform' and next_dest == my_area():
+	if is_on_floor() and (not above_ladder) and (not on_ladder) and (velocity.y >= 0) and (next_dest and next_dest.type == 'platform' and next_dest == area):
+		print("really.")
 		state = RunnerState.GROUND
+	else:
+		print("hm?", is_on_floor(), ", ", velocity.y, ", ", next_dest, area)
 
 	if not on_ladder:
 		state = RunnerState.GROUND if is_on_floor() else RunnerState.FALLING
-		
+
 func _hanging_process() -> void:
 	velocity.y = 0
 
@@ -732,7 +753,7 @@ func _hanging_process() -> void:
 	global_position.y = cell_coords.y
 
 	if dropX:
-		var coords = my_coords()
+		#var coords = my_coords()
 		var globalDropX = map.get_cell_center_global(Vector2i(dropX, 0)).x
 		
 		if abs(global_position.x - globalDropX) < 1.0:
@@ -772,11 +793,8 @@ func _physics_process(delta: float) -> void:
 	elif state == RunnerState.ZIPPING:
 		_zipping_process()
 
-	if top_of_ladder and velocity.y < 0:
+	if top_of_ladder and is_on_floor():
 		velocity.y = 0
-
-	#if top_of_ladder and velocity == Vector2.ZERO and sprite.animation != 'idle':
-		#sprite.play("idle")
 #
 	if velocity.x != 0.0:
 		sprite.flip_h = velocity.x > 0.0
@@ -830,7 +848,6 @@ func _ready() -> void:
 
 	if target:
 		target.connect('hero_area_change', hero_area_changed)
-
 
 func _on_game_plan_timer_timeout() -> void:
 	game_plan()
